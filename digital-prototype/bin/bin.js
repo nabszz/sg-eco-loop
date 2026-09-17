@@ -46,6 +46,7 @@ const MASCOTS = {
     emoji: "🧴",
     cls: "m-plastic",
     desc: "Hi hi! I'm Pip! Empty me and dry me, then I can become a brand new bottle. Wheee!",
+    identify: "Spot me: I'm light, I bend and crinkle, and I'm see-through or coloured. Bottles, cups and containers are me!",
     examples: ["Water bottles", "Shampoo bottles", "Yoghurt cups", "Plastic cups"],
     washMsg: "Uh-oh, Pip feels sticky! Give me a quick rinse, please!",
     washSteps: [
@@ -54,15 +55,15 @@ const MASCOTS = {
       "Shake me so I'm nice and dry.",
       "Yay! Pip is ready to recycle!"
     ],
-    // Fun facts rotate daily (one shown per day)
+    // Cartoon-flavoured fun facts, rotate daily (one shown per day)
     facts: [
-      "A plastic bottle can turn into cosy jacket fabric!",
-      "Recycling one bottle saves enough energy to light a bulb for hours.",
-      "Plastic can be melted and reshaped again and again.",
-      "Squishing bottles flat helps more fit in the truck.",
-      "Caps can be recycled too — keep them on for me!",
-      "Some playground slides are made from recycled plastic!",
-      "A bottle in nature can take 450 years to break down."
+      "A plastic bottle can transform into a superhero cape... okay, cosy jacket fabric!",
+      "Recycle me and I could become a plastic dinosaur toy that ROARS!",
+      "Like a shape-shifter, I can melt and turn into something brand new.",
+      "6 bottles = enough magic to make one cosy T-shirt!",
+      "Some LEGO-style bricks are made from recycled plastic — build away!",
+      "Playground slides can be made from bottles like me. Wheee!",
+      "Left in nature I'd nap for 450 years — recycle me so I get a new adventure!"
     ]
   },
   paper: {
@@ -72,6 +73,7 @@ const MASCOTS = {
     emoji: "📄",
     cls: "m-paper",
     desc: "Hello friend! I'm Papy! Flatten me so I'm nice and thin, and keep me dry, okay?",
+    identify: "Spot me: I'm flat, I tear easily, and I go soggy when wet. Boxes, books and newspapers are me!",
     examples: ["Newspaper", "Cardboard", "Story books", "Paper bags"],
     washMsg: "Oh dear, Papy got wet and greasy! Paper can't be washed — keep only the clean bits.",
     washSteps: [
@@ -81,13 +83,13 @@ const MASCOTS = {
       "Yay! Papy is ready to recycle!"
     ],
     facts: [
-      "One recycled paper stack can save a whole tree!",
-      "Paper can be recycled about 5 to 7 times.",
-      "Recycled paper becomes new books and boxes.",
-      "Flattening boxes saves lots of space.",
-      "Wet paper can't be recycled, so keep me dry!",
-      "Egg cartons are made from recycled paper!",
-      "Making new paper from old paper uses less water."
+      "Recycle a big stack of me and you save a whole tree — a home for cartoon owls!",
+      "I can be reborn up to 7 times, like a video-game extra life!",
+      "Recycled paper becomes brand new comic books and story books!",
+      "Old boxes can become the cardboard castle for your toys!",
+      "Egg cartons are made from recycled paper — cluck cluck!",
+      "Flatten me and lots more friends fit in the truck — teamwork!",
+      "Keep me dry, superhero — wet paper loses its powers!"
     ]
   },
   glass: {
@@ -97,6 +99,7 @@ const MASCOTS = {
     emoji: "🫙",
     cls: "m-glass",
     desc: "Sparkle sparkle! I'm Glassy! Rinse me and pop off my lid so I shine for recycling.",
+    identify: "Spot me: I'm heavy, hard, smooth and shiny, and I can be see-through. Jars and glass bottles are me! (Careful, I can break.)",
     examples: ["Jam jars", "Glass bottles", "Sauce jars", "Drink bottles"],
     washMsg: "Ooh, Glassy is a bit sticky! A quick rinse and I'll sparkle again!",
     washSteps: [
@@ -106,13 +109,13 @@ const MASCOTS = {
       "Yay! Glassy is ready to recycle!"
     ],
     facts: [
-      "Glass can be recycled forever and never wears out!",
-      "A recycled jar can become a new jar in about a month.",
-      "Glass is made from sand — cool, right?",
-      "Recycling glass saves lots of energy.",
-      "Different colours of glass get sorted separately.",
-      "A glass bottle can take a very, very long time in nature.",
-      "Rinsing me keeps the recycling clean for everyone!"
+      "I can be recycled FOREVER — like a wizard who never runs out of magic!",
+      "A jar can become a new jar in a month, faster than a superhero costume change!",
+      "I'm made from sand — imagine a beach turned into treasure jars!",
+      "I could be reborn as a shiny marble or a new bottle!",
+      "Recycle me and I sparkle like a dragon's hoard of jewels!",
+      "Rinse me clean so I shine like a crystal ball!",
+      "My colours get sorted like sorting your crayons by colour!"
     ]
   },
   metal: {
@@ -122,6 +125,7 @@ const MASCOTS = {
     emoji: "🥫",
     cls: "m-metal",
     desc: "Clink clank! I'm Metty! Cans like me can be recycled again and again. Rinse me first!",
+    identify: "Spot me: I'm cold, shiny and I go CLINK when you tap me. Drink cans and food tins are me!",
     examples: ["Drink cans", "Food tins", "Foil trays", "Bottle caps"],
     washMsg: "Uh-oh, Metty is messy! Rinse me and I'll be shiny clean!",
     washSteps: [
@@ -131,13 +135,13 @@ const MASCOTS = {
       "Yay! Metty is ready to recycle!"
     ],
     facts: [
-      "A can can be recycled and back on a shelf in 60 days!",
-      "Recycling cans saves a huge amount of energy.",
-      "Metal can be recycled over and over forever.",
-      "A magnet helps machines sort steel cans.",
-      "Squashing cans helps more fit in the bin.",
-      "Old cans can become bicycle parts!",
-      "Foil trays can be recycled if they're clean."
+      "A can can become a new can in 60 days — like a robot rebuilding itself!",
+      "Old cans can transform into a bicycle or even a rocket part!",
+      "I can be recycled forever, like a robot with unlimited upgrades!",
+      "A magnet zooms in to grab me — whoosh, super power!",
+      "Squash me flat and I'm a tiny metal pancake, ready to travel!",
+      "Recycling me saves enough energy to play cartoons for hours!",
+      "Clean foil trays can join the metal team too — go team!"
     ]
   },
   ewaste: {
@@ -147,6 +151,7 @@ const MASCOTS = {
     emoji: "🔌",
     cls: "m-ewaste",
     desc: "Zap! I'm Eddy! Old batteries and gadgets belong with me — never the normal bin. Ask an adult!",
+    identify: "Spot me: I have wires, batteries, buttons or lights. Old toys, cables and phones are me! Always ask an adult.",
     examples: ["Old batteries", "Cables", "Broken toys", "Old phones"],
     washMsg: "Careful! Eddy must stay dry. Never wash me — just make sure I'm safe.",
     washSteps: [
@@ -156,13 +161,13 @@ const MASCOTS = {
       "Yay! Eddy is ready to recycle safely!"
     ],
     facts: [
-      "Old phones have tiny bits of real gold inside!",
-      "Batteries must be recycled specially, never binned.",
-      "E-waste parts can become new gadgets.",
-      "Always ask an adult to help with e-waste.",
-      "Recycling metals from gadgets saves mining.",
-      "Broken toys with wires count as e-waste too.",
-      "Keeping e-waste out of normal bins protects nature."
+      "Old phones have real gold inside — like tiny robot treasure!",
+      "Recycle me and my parts could power a new game console!",
+      "I'm like a robot that gets rebuilt into a brand new gadget!",
+      "Batteries have secret energy — recycle them, never bin them!",
+      "A recycling wizard (an adult) should always help with me!",
+      "Broken robot toys with wires are part of my super team!",
+      "Keep me out of normal bins to protect cartoon forests and animals!"
     ]
   }
 };
@@ -175,6 +180,23 @@ const WEIGHT_RANGES = {
   metal:   [25, 90],
   ewaste:  [40, 250]
 };
+
+/* ---------- Draggable practice items (the side tray) ----------
+   Drag one onto the screen to simulate the AI bin recognising it.
+   Each item knows its real material and whether it's clean or dirty,
+   so the program can auto-route and pre-set the clean/dirty check. */
+const ITEMS = [
+  { id: "bottle-clean", label: "Clean water bottle", emoji: "🧴", material: "plastic", dirty: false },
+  { id: "bottle-dirty", label: "Dirty juice bottle", emoji: "🧃", material: "plastic", dirty: true },
+  { id: "can-clean",    label: "Rinsed drink can",  emoji: "🥫", material: "metal",   dirty: false },
+  { id: "can-dirty",    label: "Messy food tin",    emoji: "🍥", material: "metal",   dirty: true },
+  { id: "jar-clean",    label: "Clean glass jar",   emoji: "🫙", material: "glass",   dirty: false },
+  { id: "jar-dirty",    label: "Sticky jam jar",    emoji: "🍯", material: "glass",   dirty: true },
+  { id: "paper-clean",  label: "Flat cardboard",    emoji: "📦", material: "paper",   dirty: false },
+  { id: "paper-dirty",  label: "Greasy pizza box",  emoji: "🍕", material: "paper",   dirty: true },
+  { id: "ewaste-clean", label: "Old toy phone",     emoji: "📱", material: "ewaste",  dirty: false },
+  { id: "ewaste-dirty", label: "Used batteries",    emoji: "🔋", material: "ewaste",  dirty: true }
+];
 
 /* ---------- Helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -260,8 +282,22 @@ function goIdle() {
   showView("idle");
 }
 
-/* ---------- Open a mascot ---------- */
-function openMascot(material) {
+/* ---------- "Good job!" praise pop ---------- */
+const PRAISE = ["Good job! 🎉", "Well done! ⭐", "You got it! 👏", "Super sorting! 💪", "Nice one, eco-hero! 🦸"];
+function showPraise(msg) {
+  const el = $("praisePop");
+  if (!el) return;
+  el.textContent = msg || PRAISE[randInt(0, PRAISE.length - 1)];
+  el.classList.remove("show");
+  // restart animation
+  void el.offsetWidth;
+  el.classList.add("show");
+}
+
+/* ---------- Open a mascot ----------
+   preset (optional): { dirty: true|false } to pre-answer the clean/dirty check
+   praise (optional): custom praise message (e.g. after a correct drag-and-drop) */
+function openMascot(material, preset, praise) {
   current = material;
   const m = MASCOTS[material];
 
@@ -271,6 +307,9 @@ function openMascot(material) {
   matEl.textContent = m.material;
   matEl.style.background = m.color;
   $("mascotDesc").textContent = m.desc;
+
+  // "How to spot me" identification line (helps kids learn each material)
+  $("identifyText").textContent = m.identify;
 
   // Daily fun fact
   $("factText").textContent = factForToday(material);
@@ -292,6 +331,15 @@ function openMascot(material) {
 
   lightStation(material);
   showView("mascot");
+
+  // Encouraging feedback for tapping/choosing a material
+  showPraise(praise);
+
+  // If an item was dragged in, auto-answer the clean/dirty check
+  if (preset && typeof preset.dirty === "boolean") {
+    if (preset.dirty) chooseDirty();
+    else chooseClean();
+  }
 }
 
 /* ---------- Clean path ---------- */
@@ -469,6 +517,73 @@ function resetIdleTimer() {
   idleTimer = setTimeout(goIdle, 45000);
 }
 
+/* ============================================================
+   Practice item tray + drag-and-drop simulation
+   Lets users drop a realistic item onto the screen so the bin
+   behaves like the real AI unit (recognise material + clean/dirty).
+   ============================================================ */
+function buildTray() {
+  const tray = $("itemTray");
+  if (!tray) return;
+  tray.innerHTML = "";
+  ITEMS.forEach(item => {
+    const el = document.createElement("button");
+    el.className = "tray-item";
+    el.draggable = true;
+    el.dataset.item = item.id;
+    el.style.setProperty("--c", MASCOTS[item.material].color);
+    el.innerHTML =
+      `<span class="tray-emoji">${item.emoji}</span>` +
+      `<span class="tray-label">${item.label}</span>` +
+      `<span class="tray-tag ${item.dirty ? "dirty" : "clean"}">${item.dirty ? "dirty" : "clean"}</span>`;
+
+    // drag (desktop)
+    el.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", item.id);
+      e.dataTransfer.effectAllowed = "move";
+      el.classList.add("dragging");
+    });
+    el.addEventListener("dragend", () => el.classList.remove("dragging"));
+
+    // tap fallback (touch / click) — same as dropping onto the bin
+    el.addEventListener("click", () => simulateDrop(item.id));
+
+    tray.appendChild(el);
+  });
+}
+
+function itemById(id) { return ITEMS.find(i => i.id === id); }
+
+// The AI bin "recognises" the item, routes to the right mascot,
+// and pre-answers the clean/dirty check.
+function simulateDrop(itemId) {
+  const item = itemById(itemId);
+  if (!item) return;
+  const m = MASCOTS[item.material];
+  const praise = `Good job! That's ${m.material.toLowerCase()} — ${m.name} spotted it! ✅`;
+  openMascot(item.material, { dirty: item.dirty }, praise);
+
+  // little flash on the matching station so kids see where it goes
+  const st = document.querySelector(`.station[data-material="${item.material}"]`);
+  if (st) {
+    st.classList.add("just-hit");
+    setTimeout(() => st.classList.remove("just-hit"), 900);
+  }
+}
+
+function wireDropZone() {
+  const zone = $("screenGlass");
+  if (!zone) return;
+  zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drop-hover"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("drop-hover"));
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    zone.classList.remove("drop-hover");
+    const id = e.dataTransfer.getData("text/plain");
+    if (id) simulateDrop(id);
+  });
+}
+
 /* ---------- Wire up ---------- */
 function init() {
   // physical stations open the program on the big screen
@@ -511,6 +626,10 @@ function init() {
   document.querySelectorAll(".welcome-char").forEach(el => {
     el.innerHTML = mascotCharacter(el.dataset.open, 64);
   });
+
+  // practice item tray + drop zone
+  buildTray();
+  wireDropZone();
 
   setRewardMode(rewardMode);
   goIdle();

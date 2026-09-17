@@ -23,6 +23,9 @@
               <!-- ===== PROGRAM: runs inside the unit's screen ===== -->
               <div class="program" id="program">
 
+                <!-- Floating "Good job!" praise pop -->
+                <div class="praise-pop" id="praisePop" aria-live="polite"></div>
+
                 <!-- IDLE / WELCOME -->
                 <section class="view view-idle active" id="view-idle">
                   <div class="scr-topline">
@@ -71,6 +74,15 @@
                       <span class="mascot-material" id="mascotMaterial">Plastic</span>
                       <p class="mascot-desc" id="mascotDesc"></p>
                       <div class="mascot-examples" id="mascotExamples"></div>
+                    </div>
+                  </div>
+
+                  <!-- How to spot this material (identification learning) -->
+                  <div class="identify-card">
+                    <span class="identify-icon">🔍</span>
+                    <div>
+                      <span class="identify-label">How to spot me</span>
+                      <p class="identify-text" id="identifyText"></p>
                     </div>
                   </div>
 
@@ -249,8 +261,18 @@
       <div class="base"></div>
     </div>
 
+    <!-- ============ Practice item tray (drag onto the screen) ============ -->
+    <aside class="tray-panel">
+      <div class="tray-header">
+        <h3>🧺 Try an item</h3>
+        <p>Drag an item onto the screen (or tap it). The bin will figure out the material and if it's clean or dirty — just like the real one!</p>
+      </div>
+      <div class="item-tray" id="itemTray"></div>
+      <p class="tray-hint">Clean = ready to recycle. Dirty = rinse me first!</p>
+    </aside>
+
     <a class="home-link" href="../index.html">← Back to menu</a>
-    <p class="caption">Community recycling bin — the program runs on the built-in screen. Tap a mascot on the screen or a bin below.</p>
+    <p class="caption">Community recycling bin — the program runs on the built-in screen. Tap a mascot on the screen, drag an item from the tray, or tap a bin below.</p>
   </div>
 
   <script src="bin.js"></script>

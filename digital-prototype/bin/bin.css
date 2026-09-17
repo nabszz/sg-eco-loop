@@ -481,3 +481,91 @@ body {
   .mascot-card { flex-direction: column; text-align: center; }
   .mascot-char { min-width: 0; }
 }
+
+/* ================= Identify card (how to spot me) ================= */
+.identify-card {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px;
+  background: linear-gradient(90deg, #e7f3ff, #d6ecff);
+  border: 2px dashed #6db2f0; border-radius: 16px;
+  padding: 12px 16px;
+}
+.identify-icon { font-size: 28px; }
+.identify-label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: #1d6fb8; }
+.identify-text { font-size: 15px; color: #1e4d73; font-weight: 700; line-height: 1.35; }
+
+/* ================= "Good job!" praise pop ================= */
+.praise-pop {
+  position: absolute; top: 12px; left: 50%; transform: translate(-50%, -20px);
+  z-index: 20; pointer-events: none;
+  background: #ffd23b; color: #5a3d00;
+  font-weight: 900; font-size: 18px;
+  padding: 10px 22px; border-radius: 999px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.2);
+  opacity: 0;
+}
+.praise-pop.show { animation: praise 1.6s ease forwards; }
+@keyframes praise {
+  0%   { opacity: 0; transform: translate(-50%, -20px) scale(.6); }
+  15%  { opacity: 1; transform: translate(-50%, 4px) scale(1.08); }
+  30%  { transform: translate(-50%, 0) scale(1); }
+  80%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -10px) scale(.95); }
+}
+
+/* ================= Drop zone highlight ================= */
+.screen-glass.drop-hover { outline: 4px dashed #22b573; outline-offset: -8px; }
+
+/* ================= Practice item tray ================= */
+.tray-panel {
+  z-index: 2;
+  width: 100%; max-width: 780px;
+  margin-top: 22px;
+  background: #ffffff;
+  border: 3px solid #cfe0d8;
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
+.tray-header h3 { font-size: 18px; color: #14a37f; }
+.tray-header p { font-size: 13px; color: #4a6a5e; margin: 4px 0 12px; line-height: 1.4; }
+
+.item-tray {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.tray-item {
+  position: relative;
+  border: 2px solid var(--c, #cfe0d8);
+  background: #f6fbf9;
+  border-radius: 14px;
+  padding: 12px 6px 10px;
+  cursor: grab;
+  font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.tray-item:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,.12); }
+.tray-item:active { cursor: grabbing; }
+.tray-item.dragging { opacity: .5; }
+.tray-emoji { font-size: 34px; line-height: 1; }
+.tray-label { font-size: 11px; font-weight: 700; color: #2d5a4b; text-align: center; line-height: 1.2; }
+.tray-tag {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px;
+  padding: 2px 8px; border-radius: 999px;
+}
+.tray-tag.clean { background: #d6f5e5; color: #12805a; }
+.tray-tag.dirty { background: #ffe0d6; color: #c0502b; }
+.tray-hint { margin-top: 12px; font-size: 12px; color: #7d95a8; text-align: center; }
+
+/* station flash when an item is routed to it */
+.station.just-hit { animation: hitFlash .9s ease; }
+@keyframes hitFlash {
+  0%, 100% { box-shadow: none; }
+  40% { box-shadow: 0 0 0 5px rgba(34,181,115,.45), 0 0 30px rgba(34,181,115,.5); border-color: #22b573; }
+}
+
+@media (max-width: 780px) {
+  .item-tray { grid-template-columns: repeat(2, 1fr); }
+}
