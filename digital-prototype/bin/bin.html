@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EcoLoop Kids | Recycling Bin Unit</title>
+  <title>EcoLoop Kids | Community Recycling Bin</title>
   <link rel="stylesheet" href="bin.css" />
 </head>
 <body>
@@ -13,40 +13,166 @@
     <!-- ================= THE BIN UNIT ================= -->
     <div class="unit" id="unit">
 
-      <!-- Curved hood + mounted screen (top of drawing) -->
+      <!-- Curved hood + BIG mounted screen with the program inside -->
       <div class="hood">
         <div class="hood-shade"></div>
         <div class="screen-mount">
           <div class="screen-bezel">
             <div class="screen-glass" id="screenGlass">
-              <!-- Idle screen -->
-              <div class="scr scr-idle active" id="scrIdle">
-                <div class="scr-logo">♻️ EcoLoop Kids</div>
-                <div class="scr-video" id="scrVideo">
-                  <span class="play">▶</span>
-                  <p>Educational clip playing…</p>
-                  <small>Videoclip + Kahoot-style eco quiz</small>
-                </div>
-                <p class="scr-cta">Tap a bin below to start recycling!</p>
+
+              <!-- ===== PROGRAM: runs inside the unit's screen ===== -->
+              <div class="program" id="program">
+
+                <!-- IDLE / WELCOME -->
+                <section class="view view-idle active" id="view-idle">
+                  <div class="scr-topline">
+                    <span class="scr-logo">♻️ EcoLoop Kids</span>
+                    <div class="mode-toggle" title="Choose the reward for today">
+                      <button class="mode-btn on" data-mode="ezlink">💳 EZ-Link</button>
+                      <button class="mode-btn" data-mode="points">⭐ Points</button>
+                    </div>
+                  </div>
+
+                  <p class="mode-note" id="modeNote"></p>
+
+                  <h2 class="welcome-title">Hi friend! What are you recycling today?</h2>
+
+                  <div class="welcome-mascots">
+                    <button class="welcome-item" data-open="plastic">
+                      <span class="welcome-char" data-open="plastic"></span>
+                      <span class="welcome-label">Plastic</span>
+                    </button>
+                    <button class="welcome-item" data-open="paper">
+                      <span class="welcome-char" data-open="paper"></span>
+                      <span class="welcome-label">Paper</span>
+                    </button>
+                    <button class="welcome-item" data-open="glass">
+                      <span class="welcome-char" data-open="glass"></span>
+                      <span class="welcome-label">Glass</span>
+                    </button>
+                    <button class="welcome-item" data-open="metal">
+                      <span class="welcome-char" data-open="metal"></span>
+                      <span class="welcome-label">Metal</span>
+                    </button>
+                    <button class="welcome-item" data-open="ewaste">
+                      <span class="welcome-char" data-open="ewaste"></span>
+                      <span class="welcome-label">E-waste</span>
+                    </button>
+                  </div>
+                  <p class="hint">Tap a friendly mascot to begin 👇</p>
+                </section>
+
+                <!-- MASCOT DETAIL -->
+                <section class="view view-mascot" id="view-mascot">
+                  <div class="mascot-card">
+                    <div class="mascot-char" id="mascotChar"></div>
+                    <div class="mascot-info">
+                      <h2 id="mascotName">Pip the Pal</h2>
+                      <span class="mascot-material" id="mascotMaterial">Plastic</span>
+                      <p class="mascot-desc" id="mascotDesc"></p>
+                      <div class="mascot-examples" id="mascotExamples"></div>
+                    </div>
+                  </div>
+
+                  <!-- Daily fun fact -->
+                  <div class="fact-card">
+                    <span class="fact-star">💡</span>
+                    <div>
+                      <span class="fact-label">Fun fact of the day</span>
+                      <p class="fact-text" id="factText"></p>
+                    </div>
+                  </div>
+
+                  <!-- Clean choice -->
+                  <div class="item-check" id="itemCheck">
+                    <p class="check-q">Is your item clean and empty?</p>
+                    <div class="check-buttons">
+                      <button class="btn btn-clean" id="btnClean">✨ Yes, it's clean!</button>
+                      <button class="btn btn-dirty" id="btnDirty">😬 A bit dirty</button>
+                    </div>
+                  </div>
+
+                  <!-- Clean -> dispense -->
+                  <div class="dispense-box hidden" id="dispenseBox">
+                    <p class="good-choice">🎉 Great choice!</p>
+                    <button class="btn btn-dispense" id="btnDispense">Pop me in the bin!</button>
+                  </div>
+
+                  <!-- Dirty -> wash -->
+                  <div class="wash-box hidden" id="washBox">
+                    <p class="dirty-alert" id="dirtyAlert"></p>
+                    <div class="wash-steps" id="washSteps"></div>
+                    <button class="btn btn-wash" id="btnWash">🚰 Take me to the rinsing bin</button>
+                  </div>
+
+                  <button class="btn btn-back" id="btnBack">← Back</button>
+                </section>
+
+                <!-- WASHING -->
+                <section class="view view-washing" id="view-washing">
+                  <div class="sink">
+                    <div class="tap">🚰</div>
+                    <div class="water" id="waterStream"></div>
+                    <div class="washing-char" id="washingChar"></div>
+                    <div class="bubbles" id="bubbles"></div>
+                  </div>
+                  <h2 id="washingText">Scrub scrub scrub...</h2>
+                  <div class="wash-progress"><div class="wash-progress-bar" id="washBar"></div></div>
+                  <button class="btn btn-dispense hidden" id="btnAfterWash">✨ All clean! Pop me in!</button>
+                </section>
+
+                <!-- REWARD (weighed, not yet collected) -->
+                <section class="view view-reward" id="view-reward">
+                  <div class="confetti" id="confetti"></div>
+                  <div class="reward-char" id="rewardChar"></div>
+                  <h2 id="rewardText">Thank you!</h2>
+                  <p class="weigh-line">Weighing... <strong><span id="itemWeight">0</span> g</strong></p>
+                  <div class="reward-earned">
+                    <span class="reward-earned-label" id="rewardValueLabel">EZ-Link cents</span>
+                    <span class="reward-earned-value">+<span id="itemReward">0</span></span>
+                  </div>
+                  <button class="btn btn-again" id="btnToCollect">Collect my reward →</button>
+                </section>
+
+                <!-- COLLECT INCENTIVE INTERFACE -->
+                <section class="view view-collect" id="view-collect">
+                  <div class="collect-icon" id="collectIcon">💳</div>
+                  <h2 id="collectTitle">Tap your EZ-Link card</h2>
+                  <p class="collect-how" id="collectHow"></p>
+                  <div class="collect-amount-wrap">
+                    <span class="collect-amount-label">Ready to collect</span>
+                    <span class="collect-amount" id="collectAmount">0</span>
+                  </div>
+                  <div class="collect-reader" id="collectReader">
+                    <div class="reader-pad">📡</div>
+                    <span class="reader-hint">reader</span>
+                  </div>
+                  <button class="btn btn-dispense" id="btnDoCollect">Collect my reward</button>
+                  <p class="community-note">This is a shared community bin — rewards are not stored here.</p>
+                </section>
+
+                <!-- DONE -->
+                <section class="view view-done" id="view-done">
+                  <div class="confetti" id="confettiDone"></div>
+                  <div class="done-char" id="doneChar"></div>
+                  <h2 class="done-h" id="doneMsg">Collected!</h2>
+                  <p class="done-sub" id="doneSub"></p>
+                  <button class="btn btn-again" id="btnAgain">🔁 Recycle another item</button>
+                </section>
+
               </div>
-              <!-- Active bin screen -->
-              <div class="scr scr-active" id="scrActive">
-                <div class="scr-mascot" id="scrMascot">🧴</div>
-                <h2 id="scrTitle">Pip the Pal</h2>
-                <p id="scrMsg">Great choice! Press the setting to open the bin.</p>
-                <button class="open-btn" id="openBtn">Press to open bin ⚙️</button>
-              </div>
+              <!-- ===== /PROGRAM ===== -->
+
             </div>
           </div>
           <div class="screen-neck"></div>
         </div>
       </div>
 
-      <!-- Body: the row of bins -->
+      <!-- Body: the row of physical bins -->
       <div class="body">
         <div class="bin-row" id="binRow">
 
-          <!-- Each .station = one material bin -->
           <div class="station" data-material="plastic" style="--c:#4aa3ff">
             <div class="station-head">
               <span class="station-emoji">🧴</span>
@@ -102,7 +228,7 @@
             <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
           </div>
 
-          <!-- Rinsing bin (right side of drawing) -->
+          <!-- Rinsing bin -->
           <div class="station rinse" data-material="rinse">
             <div class="station-head">
               <span class="station-emoji">🚰</span>
@@ -124,7 +250,7 @@
     </div>
 
     <a class="home-link" href="../index.html">← Back to menu</a>
-    <p class="caption">Digital render of the physical unit — based on the concept sketch. Click any bin.</p>
+    <p class="caption">Community recycling bin — the program runs on the built-in screen. Tap a mascot on the screen or a bin below.</p>
   </div>
 
   <script src="bin.js"></script>
