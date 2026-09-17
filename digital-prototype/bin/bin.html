@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoLoop Kids | Recycling Bin Unit</title>
+  <link rel="stylesheet" href="bin.css" />
+</head>
+<body>
+  <div class="room">
+    <div class="floor"></div>
+
+    <!-- ================= THE BIN UNIT ================= -->
+    <div class="unit" id="unit">
+
+      <!-- Curved hood + mounted screen (top of drawing) -->
+      <div class="hood">
+        <div class="hood-shade"></div>
+        <div class="screen-mount">
+          <div class="screen-bezel">
+            <div class="screen-glass" id="screenGlass">
+              <!-- Idle screen -->
+              <div class="scr scr-idle active" id="scrIdle">
+                <div class="scr-logo">♻️ EcoLoop Kids</div>
+                <div class="scr-video" id="scrVideo">
+                  <span class="play">▶</span>
+                  <p>Educational clip playing…</p>
+                  <small>Videoclip + Kahoot-style eco quiz</small>
+                </div>
+                <p class="scr-cta">Tap a bin below to start recycling!</p>
+              </div>
+              <!-- Active bin screen -->
+              <div class="scr scr-active" id="scrActive">
+                <div class="scr-mascot" id="scrMascot">🧴</div>
+                <h2 id="scrTitle">Pip the Pal</h2>
+                <p id="scrMsg">Great choice! Press the setting to open the bin.</p>
+                <button class="open-btn" id="openBtn">Press to open bin ⚙️</button>
+              </div>
+            </div>
+          </div>
+          <div class="screen-neck"></div>
+        </div>
+      </div>
+
+      <!-- Body: the row of bins -->
+      <div class="body">
+        <div class="bin-row" id="binRow">
+
+          <!-- Each .station = one material bin -->
+          <div class="station" data-material="plastic" style="--c:#4aa3ff">
+            <div class="station-head">
+              <span class="station-emoji">🧴</span>
+              <span class="station-name">Plastic</span>
+            </div>
+            <div class="station-slot"><span class="slot-mouth"></span></div>
+            <div class="station-window"><span class="wave">〜</span><span class="wave">〜</span></div>
+            <div class="station-drawer"></div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+          <div class="station" data-material="paper" style="--c:#f6b23b">
+            <div class="station-head">
+              <span class="station-emoji">📄</span>
+              <span class="station-name">Paper</span>
+            </div>
+            <div class="station-slot"><span class="slot-mouth"></span></div>
+            <div class="station-window"><span class="wave">〜</span><span class="wave">〜</span></div>
+            <div class="station-drawer"></div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+          <div class="station" data-material="glass" style="--c:#57c785">
+            <div class="station-head">
+              <span class="station-emoji">🫙</span>
+              <span class="station-name">Glass</span>
+            </div>
+            <div class="station-slot"><span class="slot-mouth"></span></div>
+            <div class="station-window"><span class="wave">〜</span><span class="wave">〜</span></div>
+            <div class="station-drawer"></div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+          <div class="station" data-material="metal" style="--c:#c0c6d0">
+            <div class="station-head">
+              <span class="station-emoji">🥫</span>
+              <span class="station-name">Metal</span>
+            </div>
+            <div class="station-slot"><span class="slot-mouth"></span></div>
+            <div class="station-window"><span class="wave">〜</span><span class="wave">〜</span></div>
+            <div class="station-drawer"></div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+          <div class="station" data-material="ewaste" style="--c:#a97bff">
+            <div class="station-head">
+              <span class="station-emoji">🔌</span>
+              <span class="station-name">E-waste</span>
+            </div>
+            <div class="station-slot"><span class="slot-mouth"></span></div>
+            <div class="station-window"><span class="wave">〜</span><span class="wave">〜</span></div>
+            <div class="station-drawer"></div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+          <!-- Rinsing bin (right side of drawing) -->
+          <div class="station rinse" data-material="rinse">
+            <div class="station-head">
+              <span class="station-emoji">🚰</span>
+              <span class="station-name">Rinsing Bin</span>
+            </div>
+            <div class="sink-basin">
+              <div class="tap">🚰</div>
+              <div class="sink-water" id="sinkWater"></div>
+            </div>
+            <div class="rinse-note">water + soap</div>
+            <div class="sensor"><span class="sensor-dot"></span>motion sensor</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- base -->
+      <div class="base"></div>
+    </div>
+
+    <a class="home-link" href="../index.html">← Back to menu</a>
+    <p class="caption">Digital render of the physical unit — based on the concept sketch. Click any bin.</p>
+  </div>
+
+  <script src="bin.js"></script>
+</body>
+</html>

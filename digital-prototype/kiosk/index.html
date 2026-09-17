@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoLoop Kids | AI Organisational Recycling Bin</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="kiosk">
+    <!-- ================= SCREEN ================= -->
+    <div class="screen" id="screen">
+
+      <!-- Top status bar -->
+      <header class="statusbar">
+        <div class="brand">
+          <span class="leaf">♻️</span>
+          <div>
+            <h1>EcoLoop Kids</h1>
+            <p>AI Organisational Recycling Bin</p>
+          </div>
+        </div>
+
+        <div class="reward-panel">
+          <div class="reward-block">
+            <span class="reward-label">Recycled today</span>
+            <span class="reward-value"><span id="totalWeight">0</span> g</span>
+          </div>
+          <div class="reward-block ezlink">
+            <span class="reward-label">EZ-Link reward</span>
+            <span class="reward-value"><span id="totalCents">0</span>¢</span>
+          </div>
+          <div class="reward-block count">
+            <span class="reward-label">Items accepted</span>
+            <span class="reward-value" id="acceptedCount">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main stage -->
+      <main class="stage" id="stage">
+
+        <!-- Idle / welcome view -->
+        <section class="view view-welcome active" id="viewWelcome">
+          <div class="welcome-mascots">
+            <span class="mini-mascot" style="--c:#4aa3ff">🧴</span>
+            <span class="mini-mascot" style="--c:#f6b23b">📄</span>
+            <span class="mini-mascot" style="--c:#57c785">🫙</span>
+            <span class="mini-mascot" style="--c:#c0c6d0">🥫</span>
+            <span class="mini-mascot" style="--c:#a97bff">🔌</span>
+          </div>
+          <h2>Hi friend! What are you recycling today?</h2>
+          <p class="hint">Tap a mascot below to get started 👇</p>
+        </section>
+
+        <!-- Mascot detail view -->
+        <section class="view view-mascot" id="viewMascot">
+          <div class="mascot-card">
+            <div class="mascot-avatar" id="mascotAvatar">🧴</div>
+            <div class="mascot-info">
+              <h2 id="mascotName">Pip the Pal</h2>
+              <p class="mascot-material" id="mascotMaterial">Plastic</p>
+              <p class="mascot-desc" id="mascotDesc"></p>
+              <div class="mascot-examples" id="mascotExamples"></div>
+            </div>
+          </div>
+
+          <!-- Clean choice -->
+          <div class="item-check" id="itemCheck">
+            <p class="check-q">Is your item clean and empty?</p>
+            <div class="check-buttons">
+              <button class="btn btn-clean" id="btnClean">✨ Yes, it's clean!</button>
+              <button class="btn btn-dirty" id="btnDirty">😬 It's a bit dirty</button>
+            </div>
+          </div>
+
+          <!-- Dispense (clean path) -->
+          <div class="dispense-box hidden" id="dispenseBox">
+            <p class="good-choice">🎉 Great choice!</p>
+            <button class="btn btn-dispense" id="btnDispense">Click to dispense me!</button>
+          </div>
+
+          <!-- Dirty path -->
+          <div class="wash-box hidden" id="washBox">
+            <p class="dirty-alert" id="dirtyAlert"></p>
+            <div class="wash-steps" id="washSteps"></div>
+            <button class="btn btn-wash" id="btnWash">🚰 Take me to the rinsing bin</button>
+          </div>
+
+          <button class="btn btn-back" id="btnBack">← Back</button>
+        </section>
+
+        <!-- Washing animation view -->
+        <section class="view view-wash" id="viewWashing">
+          <div class="sink">
+            <div class="tap">🚰</div>
+            <div class="water" id="waterStream"></div>
+            <div class="washing-mascot" id="washingMascot">🧴</div>
+            <div class="bubbles" id="bubbles"></div>
+          </div>
+          <h2 id="washingText">Scrub scrub scrub...</h2>
+          <div class="wash-progress"><div class="wash-progress-bar" id="washBar"></div></div>
+          <button class="btn btn-dispense hidden" id="btnAfterWash">✨ All clean! Dispense me!</button>
+        </section>
+
+        <!-- Success / dispensing view -->
+        <section class="view view-success" id="viewSuccess">
+          <div class="confetti" id="confetti"></div>
+          <div class="success-mascot" id="successMascot">🧴</div>
+          <h2 id="successText">Thank you!</h2>
+          <p class="weigh-line">Weighing... <strong><span id="itemWeight">0</span> g</strong></p>
+          <p class="earn-line">You earned <strong>+<span id="itemCents">0</span>¢</strong> on your EZ-Link!</p>
+          <div class="bin-open" id="binOpen">
+            <div class="bin-lid" id="binLid"></div>
+            <div class="bin-body">♻️</div>
+          </div>
+          <button class="btn btn-again" id="btnAgain">Recycle another item</button>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- ================= PHYSICAL BINS ================= -->
+    <div class="bins" id="bins">
+      <div class="bin" data-material="plastic">
+        <div class="bin-sensor">sensor</div>
+        <div class="bin-face" style="--c:#4aa3ff">🧴</div>
+        <span class="bin-label">Plastic</span>
+      </div>
+      <div class="bin" data-material="paper">
+        <div class="bin-sensor">sensor</div>
+        <div class="bin-face" style="--c:#f6b23b">📄</div>
+        <span class="bin-label">Paper</span>
+      </div>
+      <div class="bin" data-material="glass">
+        <div class="bin-sensor">sensor</div>
+        <div class="bin-face" style="--c:#57c785">🫙</div>
+        <span class="bin-label">Glass</span>
+      </div>
+      <div class="bin" data-material="metal">
+        <div class="bin-sensor">sensor</div>
+        <div class="bin-face" style="--c:#c0c6d0">🥫</div>
+        <span class="bin-label">Metal</span>
+      </div>
+      <div class="bin" data-material="ewaste">
+        <div class="bin-sensor">sensor</div>
+        <div class="bin-face" style="--c:#a97bff">🔌</div>
+        <span class="bin-label">E-waste</span>
+      </div>
+
+      <div class="rinse-bin" id="rinseBin">
+        <div class="bin-face">🚰</div>
+        <span class="bin-label">Rinsing<br>Bin</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

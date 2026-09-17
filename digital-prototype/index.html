@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoLoop Kids | Digital Prototype</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #1f5045, #0f2a24 70%);
+      min-height: 100vh; color: #eafff7;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 30px; text-align: center;
+    }
+    .logo { font-size: 54px; }
+    h1 { font-size: 34px; margin: 6px 0; }
+    .sub { color: #9ed9c6; margin-bottom: 34px; font-size: 16px; max-width: 560px; }
+    .cards { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+    .card {
+      width: 300px; background: #14342c; border: 3px solid #245e50;
+      border-radius: 22px; padding: 26px; text-decoration: none; color: #eafff7;
+      transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .card:hover { transform: translateY(-6px); border-color: #22b573; box-shadow: 0 16px 30px rgba(0,0,0,.4); }
+    .card .icon { font-size: 60px; }
+    .card h2 { font-size: 22px; margin: 12px 0 8px; }
+    .card p { font-size: 14px; color: #9ed9c6; line-height: 1.45; }
+    .tag {
+      display: inline-block; margin-top: 14px; font-size: 12px; font-weight: 800;
+      background: #22b573; color: #04140f; padding: 6px 14px; border-radius: 999px;
+    }
+    footer { margin-top: 34px; font-size: 12px; color: #6fae9c; }
+  </style>
+</head>
+<body>
+  <div class="logo">♻️</div>
+  <h1>EcoLoop Kids — Digital Prototype</h1>
+  <p class="sub">AI Organisational Recycling Bin for Kidztropic. Explore the two digital views below.</p>
+
+  <div class="cards">
+    <a class="card" href="bin/bin.html">
+      <div class="icon">🗑️</div>
+      <h2>The Bin Unit</h2>
+      <p>A render of the actual physical machine based on the concept sketch: mounted screen, five material bins in a row with motion sensors, and the rinsing bin.</p>
+      <span class="tag">View the machine →</span>
+    </a>
+
+    <a class="card" href="kiosk/index.html">
+      <div class="icon">📺</div>
+      <h2>The Touchscreen</h2>
+      <p>The interactive kiosk screen kids tap: pick a mascot, clean-or-dirty check, washing steps, dispense, and EZ-Link cents rewards (100g = $1).</p>
+      <span class="tag">Try the screen →</span>
+    </a>
+  </div>
+
+  <footer>Concept: encourage learning of recyclables from young · Industry partner: Kidztropic</footer>
+</body>
+</html>
