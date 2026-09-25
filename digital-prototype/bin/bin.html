@@ -23,46 +23,68 @@
               <!-- ===== PROGRAM: runs inside the unit's screen ===== -->
               <div class="program" id="program">
 
+                <!-- Soft animated backdrop shared by all screens -->
+                <div class="scr-bg" aria-hidden="true">
+                  <span class="blob b1"></span>
+                  <span class="blob b2"></span>
+                  <span class="blob b3"></span>
+                  <span class="float f1">🍃</span>
+                  <span class="float f2">♻️</span>
+                  <span class="float f3">✨</span>
+                  <span class="float f4">🌱</span>
+                </div>
+
                 <!-- Floating "Good job!" praise pop -->
                 <div class="praise-pop" id="praisePop" aria-live="polite"></div>
 
                 <!-- IDLE / WELCOME -->
                 <section class="view view-idle active" id="view-idle">
                   <div class="scr-topline">
-                    <span class="scr-logo">♻️ EcoLoop Kids</span>
-                    <div class="mode-toggle" title="Choose the reward for today">
-                      <button class="mode-btn on" data-mode="ezlink">💳 EZ-Link</button>
-                      <button class="mode-btn" data-mode="points">⭐ Points</button>
+                    <span class="scr-logo">♻️ EcoLoop <span class="logo-kids">Kids</span></span>
+                    <div class="topline-right">
+                      <button class="sound-btn" id="soundBtn" aria-label="Sound on">🔊</button>
+                      <div class="mode-toggle" title="Choose the reward for today">
+                        <button class="mode-btn on" data-mode="ezlink">💳 EZ-Link</button>
+                        <button class="mode-btn" data-mode="points">⭐ Points</button>
+                      </div>
                     </div>
                   </div>
 
-                  <p class="mode-note" id="modeNote"></p>
-
-                  <h2 class="welcome-title">Hi friend! What are you recycling today?</h2>
+                  <div class="welcome-hero">
+                    <div class="hero-char" id="heroChar"></div>
+                    <div class="hero-speech">
+                      <h2 class="welcome-title">Hi friend! <br>What are we recycling today?</h2>
+                      <p class="mode-note" id="modeNote"></p>
+                    </div>
+                  </div>
 
                   <div class="welcome-mascots">
-                    <button class="welcome-item" data-open="plastic">
+                    <button class="welcome-item" data-open="plastic" style="--c:#4aa3ff">
                       <span class="welcome-char" data-open="plastic"></span>
                       <span class="welcome-label">Plastic</span>
                     </button>
-                    <button class="welcome-item" data-open="paper">
+                    <button class="welcome-item" data-open="paper" style="--c:#f6b23b">
                       <span class="welcome-char" data-open="paper"></span>
                       <span class="welcome-label">Paper</span>
                     </button>
-                    <button class="welcome-item" data-open="glass">
+                    <button class="welcome-item" data-open="glass" style="--c:#57c785">
                       <span class="welcome-char" data-open="glass"></span>
                       <span class="welcome-label">Glass</span>
                     </button>
-                    <button class="welcome-item" data-open="metal">
+                    <button class="welcome-item" data-open="metal" style="--c:#c0c6d0">
                       <span class="welcome-char" data-open="metal"></span>
                       <span class="welcome-label">Metal</span>
                     </button>
-                    <button class="welcome-item" data-open="ewaste">
+                    <button class="welcome-item" data-open="ewaste" style="--c:#a97bff">
                       <span class="welcome-char" data-open="ewaste"></span>
                       <span class="welcome-label">E-waste</span>
                     </button>
                   </div>
                   <p class="hint">Tap a friendly mascot to begin 👇</p>
+
+                  <div class="idle-actions">
+                    <button class="btn btn-game" id="btnPlayGame">🎮 Play: Which bin does it go in?</button>
+                  </div>
                 </section>
 
                 <!-- MASCOT DETAIL -->
@@ -82,6 +104,7 @@
                     <span class="identify-icon">🔍</span>
                     <div>
                       <span class="identify-label">How to spot me</span>
+                      <div class="clue-chips" id="clueChips"></div>
                       <p class="identify-text" id="identifyText"></p>
                     </div>
                   </div>
@@ -118,6 +141,32 @@
                   </div>
 
                   <button class="btn btn-back" id="btnBack">← Back</button>
+                </section>
+
+                <!-- SORTING MINI-GAME: "Which bin does it go in?" -->
+                <section class="view view-game" id="view-game">
+                  <div class="game-top">
+                    <h2 class="game-title">Which bin does it go in?</h2>
+                    <div class="game-score">
+                      <span class="game-stars" id="gameStars"></span>
+                      <span class="game-star-label" id="gameStarLabel">Sort to earn stars!</span>
+                    </div>
+                  </div>
+
+                  <div class="game-item-card">
+                    <span class="game-item-emoji" id="gameItemEmoji">🧴</span>
+                    <span class="game-item-label" id="gameItemLabel">Clean water bottle</span>
+                  </div>
+
+                  <p class="game-ask">Tap the material you think it is 👇</p>
+                  <div class="game-choices" id="gameChoices"></div>
+
+                  <p class="game-feedback" id="gameFeedback" aria-live="polite"></p>
+
+                  <div class="game-buttons">
+                    <button class="btn btn-dispense hidden" id="gameNext">Next item →</button>
+                    <button class="btn btn-back" id="gameExit">← Done playing</button>
+                  </div>
                 </section>
 
                 <!-- WASHING -->

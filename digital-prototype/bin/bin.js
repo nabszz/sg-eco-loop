@@ -47,6 +47,13 @@ const MASCOTS = {
     cls: "m-plastic",
     desc: "Hi hi! I'm Pip! Empty me and dry me, then I can become a brand new bottle. Wheee!",
     identify: "Spot me: I'm light, I bend and crinkle, and I'm see-through or coloured. Bottles, cups and containers are me!",
+    // Visual clue chips (icon + tiny word) so pre-readers learn my properties
+    clues: [
+      { icon: "🪶", word: "Light" },
+      { icon: "🤏", word: "Bendy" },
+      { icon: "👀", word: "See-through" },
+      { icon: "🥤", word: "Crinkly" }
+    ],
     examples: ["Water bottles", "Shampoo bottles", "Yoghurt cups", "Plastic cups"],
     washMsg: "Uh-oh, Pip feels sticky! Give me a quick rinse, please!",
     washSteps: [
@@ -74,6 +81,12 @@ const MASCOTS = {
     cls: "m-paper",
     desc: "Hello friend! I'm Papy! Flatten me so I'm nice and thin, and keep me dry, okay?",
     identify: "Spot me: I'm flat, I tear easily, and I go soggy when wet. Boxes, books and newspapers are me!",
+    clues: [
+      { icon: "📏", word: "Flat" },
+      { icon: "✂️", word: "Tears easily" },
+      { icon: "💧", word: "Goes soggy" },
+      { icon: "🍂", word: "Rustles" }
+    ],
     examples: ["Newspaper", "Cardboard", "Story books", "Paper bags"],
     washMsg: "Oh dear, Papy got wet and greasy! Paper can't be washed — keep only the clean bits.",
     washSteps: [
@@ -100,6 +113,12 @@ const MASCOTS = {
     cls: "m-glass",
     desc: "Sparkle sparkle! I'm Glassy! Rinse me and pop off my lid so I shine for recycling.",
     identify: "Spot me: I'm heavy, hard, smooth and shiny, and I can be see-through. Jars and glass bottles are me! (Careful, I can break.)",
+    clues: [
+      { icon: "⚖️", word: "Heavy" },
+      { icon: "✨", word: "Shiny" },
+      { icon: "👀", word: "See-through" },
+      { icon: "⚠️", word: "Can break" }
+    ],
     examples: ["Jam jars", "Glass bottles", "Sauce jars", "Drink bottles"],
     washMsg: "Ooh, Glassy is a bit sticky! A quick rinse and I'll sparkle again!",
     washSteps: [
@@ -126,6 +145,12 @@ const MASCOTS = {
     cls: "m-metal",
     desc: "Clink clank! I'm Metty! Cans like me can be recycled again and again. Rinse me first!",
     identify: "Spot me: I'm cold, shiny and I go CLINK when you tap me. Drink cans and food tins are me!",
+    clues: [
+      { icon: "❄️", word: "Cold" },
+      { icon: "✨", word: "Shiny" },
+      { icon: "🔔", word: "Goes clink" },
+      { icon: "🧲", word: "Magnetic" }
+    ],
     examples: ["Drink cans", "Food tins", "Foil trays", "Bottle caps"],
     washMsg: "Uh-oh, Metty is messy! Rinse me and I'll be shiny clean!",
     washSteps: [
@@ -152,6 +177,12 @@ const MASCOTS = {
     cls: "m-ewaste",
     desc: "Zap! I'm Eddy! Old batteries and gadgets belong with me — never the normal bin. Ask an adult!",
     identify: "Spot me: I have wires, batteries, buttons or lights. Old toys, cables and phones are me! Always ask an adult.",
+    clues: [
+      { icon: "🔌", word: "Has plugs" },
+      { icon: "🔋", word: "Batteries" },
+      { icon: "💡", word: "Lights up" },
+      { icon: "🧑‍🦱", word: "Ask an adult" }
+    ],
     examples: ["Old batteries", "Cables", "Broken toys", "Old phones"],
     washMsg: "Careful! Eddy must stay dry. Never wash me — just make sure I'm safe.",
     washSteps: [
@@ -239,7 +270,7 @@ let lastReward = { value: 0, grams: 0, collected: false };
 let idleTimer = null;
 
 /* ---------- Views ---------- */
-const VIEW_KEYS = ["idle", "mascot", "washing", "reward", "collect", "done"];
+const VIEW_KEYS = ["idle", "mascot", "game", "washing", "reward", "collect", "done"];
 function showView(key) {
   VIEW_KEYS.forEach(k => {
     const el = $("view-" + k);
@@ -311,6 +342,19 @@ function openMascot(material, preset, praise) {
   // "How to spot me" identification line (helps kids learn each material)
   $("identifyText").textContent = m.identify;
 
+  // Visual clue chips — sensory properties for pre-readers
+  const clueWrap = $("clueChips");
+  if (clueWrap) {
+    clueWrap.innerHTML = "";
+    (m.clues || []).forEach(c => {
+      const chip = document.createElement("span");
+      chip.className = "clue-chip";
+      chip.style.setProperty("--c", m.color);
+      chip.innerHTML = `<span class="clue-emoji">${c.icon}</span><span class="clue-word">${c.word}</span>`;
+      clueWrap.appendChild(chip);
+    });
+  }
+
   // Daily fun fact
   $("factText").textContent = factForToday(material);
 
@@ -334,6 +378,9 @@ function openMascot(material, preset, praise) {
 
   // Encouraging feedback for tapping/choosing a material
   showPraise(praise);
+
+  // Voice cue for pre-readers: mascot greets + names its material
+  speak(`${m.name}. ${m.material}.`);
 
   // If an item was dragged in, auto-answer the clean/dirty check
   if (preset && typeof preset.dirty === "boolean") {
@@ -584,6 +631,139 @@ function wireDropZone() {
   });
 }
 
+/* ============================================================
+   Optional voice cues (Web Speech API) for pre-readers.
+   No audio files needed. Toggleable + safely no-ops if unsupported.
+   ============================================================ */
+let soundOn = true;
+function speak(text) {
+  if (!soundOn) return;
+  try {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.95; u.pitch = 1.25; // friendly, slightly higher voice
+    window.speechSynthesis.speak(u);
+  } catch (e) { /* ignore */ }
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  const btn = $("soundBtn");
+  if (btn) {
+    btn.textContent = soundOn ? "🔊" : "🔈";
+    btn.classList.toggle("off", !soundOn);
+    btn.setAttribute("aria-label", soundOn ? "Sound on" : "Sound off");
+  }
+  if (!soundOn && "speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
+/* ============================================================
+   "Which bin?" sorting mini-game
+   Shows a real item; child taps the material they think it is.
+   Correct  -> celebrate + teach why, earn a star.
+   Wrong    -> gentle, encouraging hint; try again (no "fail").
+   Stars are per-session only and reset at idle (nothing stored).
+   ============================================================ */
+const MATERIAL_KEYS = ["plastic", "paper", "glass", "metal", "ewaste"];
+let gameItem = null;      // the current quiz item
+let gameStars = 0;        // per-session correct count
+let gameRound = 0;
+
+function goGame() {
+  gameStars = 0;
+  gameRound = 0;
+  renderGameButtons();
+  updateStars();
+  nextGameItem();
+  showView("game");
+  speak("Which bin does it go in? Tap the right material!");
+}
+
+// build the 5 material choice buttons once
+function renderGameButtons() {
+  const wrap = $("gameChoices");
+  if (!wrap || wrap.dataset.built) return;
+  wrap.innerHTML = "";
+  MATERIAL_KEYS.forEach(key => {
+    const m = MASCOTS[key];
+    const b = document.createElement("button");
+    b.className = "game-choice";
+    b.dataset.material = key;
+    b.style.setProperty("--c", m.color);
+    b.innerHTML = `<span class="game-choice-emoji">${m.emoji}</span><span class="game-choice-label">${m.material}</span>`;
+    b.addEventListener("click", () => guessMaterial(key));
+    wrap.appendChild(b);
+  });
+  wrap.dataset.built = "1";
+}
+
+function nextGameItem() {
+  gameRound++;
+  // pick a random practice item different from the last
+  let pick;
+  do { pick = ITEMS[randInt(0, ITEMS.length - 1)]; }
+  while (gameItem && pick.id === gameItem.id && ITEMS.length > 1);
+  gameItem = pick;
+
+  $("gameItemEmoji").textContent = pick.emoji;
+  $("gameItemLabel").textContent = pick.label;
+  $("gameFeedback").textContent = "";
+  $("gameFeedback").className = "game-feedback";
+  $("gameNext").classList.add("hidden");
+
+  // re-enable all choices
+  document.querySelectorAll(".game-choice").forEach(b => {
+    b.disabled = false;
+    b.classList.remove("correct", "wrong");
+  });
+
+  speak(`Which bin for ${pick.label}?`);
+}
+
+function guessMaterial(key) {
+  if (!gameItem) return;
+  const correctKey = gameItem.material;
+  const m = MASCOTS[correctKey];
+  const chosen = MASCOTS[key];
+  const btns = document.querySelectorAll(".game-choice");
+  const fb = $("gameFeedback");
+
+  if (key === correctKey) {
+    // correct!
+    gameStars++;
+    updateStars();
+    btns.forEach(b => { b.disabled = true; if (b.dataset.material === key) b.classList.add("correct"); });
+    fb.className = "game-feedback ok";
+    fb.textContent = `🎉 Yes! ${gameItem.label} is ${m.material} — ${m.name} says thank you!`;
+    showPraise("Correct! ⭐");
+    launchConfetti();
+    speak(`Correct! That's ${m.material}.`);
+    $("gameNext").classList.remove("hidden");
+  } else {
+    // gentle hint, let them try again
+    const btn = [...btns].find(b => b.dataset.material === key);
+    if (btn) { btn.classList.add("wrong"); btn.disabled = true; }
+    fb.className = "game-feedback hint";
+    const clue = (m.clues && m.clues[0]) ? m.clues[0].word.toLowerCase() : m.material.toLowerCase();
+    fb.textContent = `Not quite — that's ${chosen.material}. Hint: this item is ${clue}. Try again! 💪`;
+    speak(`Try again! Hint: it is ${clue}.`);
+  }
+}
+
+function updateStars() {
+  const el = $("gameStars");
+  if (!el) return;
+  el.innerHTML = "";
+  for (let i = 0; i < gameStars; i++) {
+    const s = document.createElement("span");
+    s.className = "star-earned";
+    s.textContent = "⭐";
+    el.appendChild(s);
+  }
+  const label = $("gameStarLabel");
+  if (label) label.textContent = gameStars === 0 ? "Sort to earn stars!" : `${gameStars} star${gameStars > 1 ? "s" : ""}!`;
+}
+
 /* ---------- Wire up ---------- */
 function init() {
   // physical stations open the program on the big screen
@@ -615,6 +795,18 @@ function init() {
   $("btnDoCollect").addEventListener("click", doCollect);
   $("btnAgain").addEventListener("click", goIdle);
 
+  // "Which bin?" sorting mini-game
+  const playBtn = $("btnPlayGame");
+  if (playBtn) playBtn.addEventListener("click", goGame);
+  const gameNext = $("gameNext");
+  if (gameNext) gameNext.addEventListener("click", nextGameItem);
+  const gameExit = $("gameExit");
+  if (gameExit) gameExit.addEventListener("click", goIdle);
+
+  // sound on/off toggle (voice cues for non-readers)
+  const soundBtn = $("soundBtn");
+  if (soundBtn) soundBtn.addEventListener("click", toggleSound);
+
   // idle video pulse
   const vid = $("scrVideo");
   if (vid) vid.addEventListener("click", () => {
@@ -626,6 +818,14 @@ function init() {
   document.querySelectorAll(".welcome-char").forEach(el => {
     el.innerHTML = mascotCharacter(el.dataset.open, 64);
   });
+
+  // friendly hero mascot that greets kids on the idle screen (rotates daily)
+  const heroEl = $("heroChar");
+  if (heroEl) {
+    const keys = Object.keys(MASCOTS);
+    const heroKey = keys[dayOfYear() % keys.length];
+    heroEl.innerHTML = mascotCharacter(heroKey, 96);
+  }
 
   // practice item tray + drop zone
   buildTray();
