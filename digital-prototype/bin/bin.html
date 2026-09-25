@@ -36,6 +36,8 @@
 
                 <!-- Floating "Good job!" praise pop -->
                 <div class="praise-pop" id="praisePop" aria-live="polite"></div>
+                <!-- Red "Incorrect" rejection pop (wrong bin) -->
+                <div class="reject-pop" id="rejectPop" aria-live="assertive"></div>
 
                 <!-- IDLE / WELCOME -->
                 <section class="view view-idle active" id="view-idle">
@@ -314,7 +316,7 @@
     <aside class="tray-panel">
       <div class="tray-header">
         <h3>🧺 Try an item</h3>
-        <p>Drag an item onto the screen (or tap it). The bin will figure out the material and if it's clean or dirty — just like the real one!</p>
+        <p><strong>Drag an item into a bin below</strong> to test it! Right bin = accepted (and it checks clean or dirty). Wrong bin = it flashes red and says try again. Or drop it on the screen to let the bin auto-detect.</p>
       </div>
       <div class="item-tray" id="itemTray"></div>
       <p class="tray-hint">Clean = ready to recycle. Dirty = rinse me first!</p>

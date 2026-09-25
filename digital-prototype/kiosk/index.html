@@ -31,6 +31,8 @@
 
           <!-- Floating "Good job!" praise pop -->
           <div class="praise-pop" id="praisePop" aria-live="polite"></div>
+          <!-- Red "Incorrect" rejection pop (wrong bin) -->
+          <div class="reject-pop" id="rejectPop" aria-live="assertive"></div>
 
           <!-- IDLE / WELCOME -->
           <section class="view view-idle active" id="view-idle">
@@ -222,55 +224,8 @@
       </div>
     </div>
 
-    <!-- Compact bin strip: the program's stations live here so the same
-         logic (light up, open slot, rinsing) works on the standalone too. -->
-    <div class="bin-strip">
-      <div class="bin-row" id="binRow">
-        <div class="station" data-material="plastic" style="--c:#4aa3ff">
-          <div class="station-head"><span class="station-emoji">🧴</span><span class="station-name">Plastic</span></div>
-          <div class="station-slot"><span class="slot-mouth"></span></div>
-          <div class="sensor"><span class="sensor-dot"></span>sensor</div>
-        </div>
-        <div class="station" data-material="paper" style="--c:#f6b23b">
-          <div class="station-head"><span class="station-emoji">📄</span><span class="station-name">Paper</span></div>
-          <div class="station-slot"><span class="slot-mouth"></span></div>
-          <div class="sensor"><span class="sensor-dot"></span>sensor</div>
-        </div>
-        <div class="station" data-material="glass" style="--c:#57c785">
-          <div class="station-head"><span class="station-emoji">🫙</span><span class="station-name">Glass</span></div>
-          <div class="station-slot"><span class="slot-mouth"></span></div>
-          <div class="sensor"><span class="sensor-dot"></span>sensor</div>
-        </div>
-        <div class="station" data-material="metal" style="--c:#c0c6d0">
-          <div class="station-head"><span class="station-emoji">🥫</span><span class="station-name">Metal</span></div>
-          <div class="station-slot"><span class="slot-mouth"></span></div>
-          <div class="sensor"><span class="sensor-dot"></span>sensor</div>
-        </div>
-        <div class="station" data-material="ewaste" style="--c:#a97bff">
-          <div class="station-head"><span class="station-emoji">🔌</span><span class="station-name">E-waste</span></div>
-          <div class="station-slot"><span class="slot-mouth"></span></div>
-          <div class="sensor"><span class="sensor-dot"></span>sensor</div>
-        </div>
-        <div class="station rinse" data-material="rinse">
-          <div class="station-head"><span class="station-emoji">🚰</span><span class="station-name">Rinsing Bin</span></div>
-          <div class="sink-basin"><div class="tap">🚰</div><div class="sink-water" id="sinkWater"></div></div>
-          <div class="rinse-note">water + soap</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Practice item tray (same as the bin) -->
-    <aside class="tray-panel">
-      <div class="tray-header">
-        <h3>🧺 Try an item</h3>
-        <p>Drag an item onto the screen (or tap it). The bin figures out the material and whether it's clean or dirty — just like the real one!</p>
-      </div>
-      <div class="item-tray" id="itemTray"></div>
-      <p class="tray-hint">Clean = ready to recycle. Dirty = rinse me first!</p>
-    </aside>
-
     <a class="home-link" href="../index.html">← Back to menu</a>
-    <p class="caption">Standalone touchscreen — the same program that runs on the bin's built-in screen.</p>
+    <p class="caption">Standalone touchscreen — just the on-screen program. Tap a mascot to recycle. (The physical bins, rinsing bin, and item tray live on the full bin unit.)</p>
   </div>
 
   <!-- Reuse the exact program logic from the bin screen -->

@@ -268,6 +268,8 @@ function mascotCharacter(material, size) {
 let current = null;                 // current material key
 let lastReward = { value: 0, grams: 0, collected: false };
 let idleTimer = null;
+let autoFlow = false;               // true when a placed item should auto-detect + auto-reward
+let pendingRinse = false;           // true when a dirty placed item is waiting for the child to rinse
 
 /* ---------- Views ---------- */
 const VIEW_KEYS = ["idle", "mascot", "game", "washing", "reward", "collect", "done"];
@@ -308,6 +310,9 @@ function setRewardMode(mode) {
 /* ---------- Idle ---------- */
 function goIdle() {
   current = null;
+  autoFlow = false;
+  pendingRinse = false;
+  clearRinsePrompt();
   lastReward = { value: 0, grams: 0, collected: false };
   clearLights();
   showView("idle");
@@ -382,10 +387,32 @@ function openMascot(material, preset, praise) {
   // Voice cue for pre-readers: mascot greets + names its material
   speak(`${m.name}. ${m.material}.`);
 
-  // If an item was dragged in, auto-answer the clean/dirty check
+  // If an item was placed, the bin auto-DETECTS clean/dirty.
   if (preset && typeof preset.dirty === "boolean") {
-    if (preset.dirty) chooseDirty();
-    else chooseClean();
+    if (preset.dirty) {
+      // detected contamination -> the CHILD must rinse it at the rinsing bin.
+      // The bin does NOT wash it for them; it prompts and waits.
+      chooseDirty();
+      if (autoFlow) {
+        pendingRinse = true;   // resume auto-reward after the child rinses
+        $("dirtyAlert").textContent = `🔎 Detected: ${MASCOTS[current].material} — but it's DIRTY! Please rinse it at the rinsing bin before recycling.`;
+        // make the call-to-action button clearer that THEY need to rinse
+        const wb = $("btnWash");
+        if (wb) wb.textContent = "🚰 I'll rinse it at the rinsing bin →";
+        // draw attention to the real rinsing bin so they go do it
+        promptRinse();
+        speak("Detected. It's dirty. Please take it to the rinsing bin and rinse it.");
+      }
+    } else {
+      // detected clean & correct -> accept and auto-reward, no taps needed
+      chooseClean();
+      if (autoFlow) {
+        $("dispenseBox").querySelector(".good-choice").textContent =
+          `🔎 Detected: ${MASCOTS[current].material}, clean! Accepting…`;
+        speak("Detected. Clean and correct. Accepting.");
+        setTimeout(() => dispense(), 1500);  // auto-weigh + auto-reward
+      }
+    }
   }
 }
 
@@ -394,6 +421,9 @@ function chooseClean() {
   $("itemCheck").classList.add("hidden");
   $("washBox").classList.add("hidden");
   $("dispenseBox").classList.remove("hidden");
+  // reset the label (auto mode overwrites it with a "Detected…" message)
+  const gc = $("dispenseBox").querySelector(".good-choice");
+  if (gc) gc.textContent = "🎉 Great choice!";
 }
 
 /* ---------- Dirty path ---------- */
@@ -423,8 +453,30 @@ function chooseDirty() {
   $("washBox").classList.remove("hidden");
 }
 
+/* ---------- Prompt the child to rinse at the rinsing bin themselves ---------- */
+function promptRinse() {
+  // light + pulse the real rinsing bin so the child knows where to go
+  const rinse = document.querySelector('.station[data-material="rinse"]');
+  if (rinse) {
+    rinse.classList.add("lit", "needs-rinse");
+  }
+  // floating pointer banner toward the rinsing bin
+  const el = $("praisePop");
+  if (el) {
+    el.textContent = "👉 Rinse it at the rinsing bin!";
+    el.classList.remove("show");
+    void el.offsetWidth;
+    el.classList.add("show");
+  }
+}
+function clearRinsePrompt() {
+  const rinse = document.querySelector('.station[data-material="rinse"]');
+  if (rinse) rinse.classList.remove("needs-rinse");
+}
+
 /* ---------- Washing animation ---------- */
 function goWash() {
+  clearRinsePrompt();
   showView("washing");
   $("washingChar").innerHTML = mascotCharacter(current, 90);
   $("washingText").textContent = "Scrub scrub scrub...";
@@ -456,7 +508,14 @@ function goWash() {
       clearInterval(timer);
       water.classList.remove("on");
       $("washingText").textContent = "All squeaky clean! ✨";
-      $("btnAfterWash").classList.remove("hidden");
+      if (autoFlow && pendingRinse) {
+        // the child rinsed a placed item -> now accept + reward automatically
+        pendingRinse = false;
+        speak("All clean! Accepting now.");
+        setTimeout(() => dispense(), 1100);
+      } else {
+        $("btnAfterWash").classList.remove("hidden");
+      }
     }
   }, 55);
 }
@@ -602,32 +661,106 @@ function buildTray() {
 function itemById(id) { return ITEMS.find(i => i.id === id); }
 
 // The AI bin "recognises" the item, routes to the right mascot,
-// and pre-answers the clean/dirty check.
+// and pre-answers the clean/dirty check. Used when the bin auto-detects
+// (drop onto the screen) OR when the item lands in the CORRECT bin.
+function acceptItem(item) {
+  const m = MASCOTS[item.material];
+  const cleanWord = item.dirty ? "and it needs a rinse" : "and it's clean";
+  const praise = `Good job! That's ${m.material.toLowerCase()} ${cleanWord} — ${m.name} spotted it! ✅`;
+
+  // this is a PLACED item -> the bin auto-detects + auto-rewards
+  autoFlow = true;
+  openMascot(item.material, { dirty: item.dirty }, praise);
+
+  // green flash on the matching station so kids see where it goes
+  flashStation(item.material, "just-hit");
+}
+
+// Auto-detect entry point (drop on screen / tap in tray): always routes correctly.
 function simulateDrop(itemId) {
   const item = itemById(itemId);
   if (!item) return;
-  const m = MASCOTS[item.material];
-  const praise = `Good job! That's ${m.material.toLowerCase()} — ${m.name} spotted it! ✅`;
-  openMascot(item.material, { dirty: item.dirty }, praise);
+  acceptItem(item);
+}
 
-  // little flash on the matching station so kids see where it goes
-  const st = document.querySelector(`.station[data-material="${item.material}"]`);
-  if (st) {
-    st.classList.add("just-hit");
-    setTimeout(() => st.classList.remove("just-hit"), 900);
+// Dropped onto a SPECIFIC bin: grade whether it's the right material.
+function dropIntoStation(itemId, material) {
+  const item = itemById(itemId);
+  if (!item) return;
+
+  // rinsing bin: always fine to rinse an item here
+  if (material === "rinse") { acceptItem(item); return; }
+
+  if (material === item.material) {
+    // right bin!
+    acceptItem(item);
+  } else {
+    // wrong bin -> reject, flash red, teach where it should go
+    rejectWrongBin(item, material);
   }
 }
 
+// Wrong-bin rejection: flash the bin red + explain (no scolding, just guidance).
+function rejectWrongBin(item, wrongMaterial) {
+  const right = MASCOTS[item.material];
+  const wrong = MASCOTS[wrongMaterial];
+
+  flashStation(wrongMaterial, "reject");
+
+  const msg = `❌ Oops! ${item.label} is ${right.material}, not ${wrong.material}. Try the ${right.material} bin!`;
+  showReject(msg);
+  speak(`Incorrect. That's ${right.material}, not ${wrong.material}.`);
+
+  // gently point to the correct bin after the red flash
+  setTimeout(() => flashStation(item.material, "hint-correct"), 700);
+}
+
+// flash a station with a given effect class for a moment
+function flashStation(material, cls) {
+  const st = document.querySelector(`.station[data-material="${material}"]`);
+  if (!st) return;
+  st.classList.add(cls);
+  setTimeout(() => st.classList.remove(cls), 1100);
+}
+
+// red rejection banner on the screen
+function showReject(msg) {
+  const el = $("rejectPop");
+  if (!el) { showPraise(msg); return; }
+  el.textContent = msg;
+  el.classList.remove("show");
+  void el.offsetWidth; // restart animation
+  el.classList.add("show");
+  clearTimeout(showReject._t);
+  showReject._t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
 function wireDropZone() {
+  // 1) The screen = "auto-detect" drop: the AI figures out the right bin.
   const zone = $("screenGlass");
-  if (!zone) return;
-  zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drop-hover"); });
-  zone.addEventListener("dragleave", () => zone.classList.remove("drop-hover"));
-  zone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    zone.classList.remove("drop-hover");
-    const id = e.dataTransfer.getData("text/plain");
-    if (id) simulateDrop(id);
+  if (zone) {
+    zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drop-hover"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("drop-hover"));
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("drop-hover");
+      const id = e.dataTransfer.getData("text/plain");
+      if (id) simulateDrop(id);
+    });
+  }
+
+  // 2) Each physical bin = a graded drop target. Drop into the RIGHT bin to
+  //    accept (detects clean/dirty); the WRONG bin rejects and flashes red.
+  document.querySelectorAll(".station").forEach(st => {
+    st.addEventListener("dragover", (e) => { e.preventDefault(); st.classList.add("drop-over"); });
+    st.addEventListener("dragleave", () => st.classList.remove("drop-over"));
+    st.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      st.classList.remove("drop-over");
+      const id = e.dataTransfer.getData("text/plain");
+      if (id) dropIntoStation(id, st.dataset.material);
+    });
   });
 }
 
@@ -636,13 +769,60 @@ function wireDropZone() {
    No audio files needed. Toggleable + safely no-ops if unsupported.
    ============================================================ */
 let soundOn = true;
+let friendlyVoice = null;   // the nicest available voice, picked once loaded
+
+// Voices we like best (natural, warm, kid-friendly), in order of preference.
+// Modern OS "Natural"/"Online" voices sound far less robotic than the old defaults.
+const PREFERRED_VOICES = [
+  // Microsoft (Edge / Windows) natural neural voices — very human
+  "Microsoft Ava (Natural)", "Microsoft Jenny (Natural)", "Microsoft Aria (Natural)",
+  "Microsoft Sonia (Natural)", "Microsoft Michelle (Natural)", "Microsoft Ana (Natural)",
+  "Microsoft Aria Online (Natural)", "Microsoft Jenny", "Microsoft Aria", "Microsoft Zira",
+  // Google (Chrome / Android)
+  "Google UK English Female", "Google US English",
+  // Apple (Safari / macOS / iOS) — warm, natural
+  "Samantha", "Karen", "Moira", "Tessa", "Ava", "Allison", "Susan"
+];
+
+function pickFriendlyVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || !voices.length) return;
+
+  // 1) exact match against our preferred list
+  for (const name of PREFERRED_VOICES) {
+    const v = voices.find(v => v.name === name);
+    if (v) { friendlyVoice = v; return; }
+  }
+  // 2) any English "natural"/"online" neural voice (these sound human)
+  friendlyVoice = voices.find(v => /en/i.test(v.lang) && /natural|online|neural/i.test(v.name));
+  if (friendlyVoice) return;
+  // 3) any English female-ish voice
+  friendlyVoice = voices.find(v => /en/i.test(v.lang) && /female|woman|zira|aria|jenny|samantha|karen|moira/i.test(v.name));
+  if (friendlyVoice) return;
+  // 4) fall back to the first English voice, else the very first voice
+  friendlyVoice = voices.find(v => /en/i.test(v.lang)) || voices[0] || null;
+}
+
+// Voices load asynchronously in most browsers.
+if ("speechSynthesis" in window) {
+  pickFriendlyVoice();
+  window.speechSynthesis.onvoiceschanged = pickFriendlyVoice;
+}
+
 function speak(text) {
   if (!soundOn) return;
   try {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
+    if (!friendlyVoice) pickFriendlyVoice();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95; u.pitch = 1.25; // friendly, slightly higher voice
+    if (friendlyVoice) { u.voice = friendlyVoice; u.lang = friendlyVoice.lang; }
+    else { u.lang = "en-US"; }
+    // warm, gentle, storybook delivery (not flat/robotic)
+    u.rate = 0.92;
+    u.pitch = 1.15;
+    u.volume = 1;
     window.speechSynthesis.speak(u);
   } catch (e) { /* ignore */ }
 }
@@ -766,18 +946,19 @@ function updateStars() {
 
 /* ---------- Wire up ---------- */
 function init() {
-  // physical stations open the program on the big screen
+  // physical stations open the program on the big screen (manual explore)
   document.querySelectorAll(".station").forEach(st => {
     st.addEventListener("click", () => {
       const mat = st.dataset.material;
       if (mat === "rinse") { goWashFromStation(); return; }
+      autoFlow = false;       // manual tap = interactive, keep the buttons
       openMascot(mat);
     });
   });
 
-  // welcome mascot icons (inside the screen) — only the buttons are clickable
+  // welcome mascot icons (inside the screen) — manual explore
   document.querySelectorAll(".welcome-item[data-open]").forEach(el => {
-    el.addEventListener("click", () => openMascot(el.dataset.open));
+    el.addEventListener("click", () => { autoFlow = false; openMascot(el.dataset.open); });
   });
 
   // reward mode toggle

@@ -746,3 +746,91 @@ body {
 .game-feedback.hint { color: #c0502b; animation: shake .5s; }
 
 .game-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+
+/* ================= Drag-into-bin simulation feedback ================= */
+
+/* highlight a bin while an item is dragged over it */
+.station.drop-over {
+  border-color: #22b573;
+  box-shadow: 0 0 0 4px rgba(34,181,115,.35), 0 0 26px rgba(34,181,115,.5);
+  transform: translateY(-4px);
+}
+
+/* WRONG bin: flash red + shake (rejection) */
+.station.reject {
+  animation: rejectFlash .55s ease 2;
+  border-color: #ff3b3b;
+}
+@keyframes rejectFlash {
+  0%, 100% { box-shadow: none; transform: translateX(0); }
+  20% { box-shadow: 0 0 0 5px rgba(255,59,59,.5), 0 0 34px rgba(255,59,59,.6); }
+  30% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); background: #ffe3e3; }
+  70% { transform: translateX(-4px); }
+}
+/* red X badge pops on the rejected bin */
+.station.reject::before {
+  content: "❌";
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  font-size: 30px; z-index: 5;
+  animation: pop .4s ease;
+}
+
+/* CORRECT bin gentle green nudge after a wrong attempt (shows where to go) */
+.station.hint-correct {
+  border-color: #22b573;
+  box-shadow: 0 0 0 4px rgba(34,181,115,.4), 0 0 30px rgba(34,181,115,.55);
+  animation: hintBounce .5s ease 2;
+}
+.station.hint-correct::before {
+  content: "👉";
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  font-size: 26px; z-index: 5;
+}
+@keyframes hintBounce { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-6px) } }
+
+/* ================= Red "Incorrect" rejection banner ================= */
+.reject-pop {
+  position: absolute; top: 12px; left: 50%; transform: translate(-50%, -20px);
+  z-index: 30; pointer-events: none;
+  background: #ff3b3b; color: #fff;
+  font-weight: 900; font-size: 16px; text-align: center;
+  padding: 10px 22px; border-radius: 16px; max-width: 90%;
+  box-shadow: 0 8px 20px rgba(255,59,59,.4);
+  opacity: 0;
+}
+.reject-pop.show { animation: rejectBanner 2.6s ease forwards; }
+@keyframes rejectBanner {
+  0%   { opacity: 0; transform: translate(-50%, -20px) scale(.6); }
+  10%  { opacity: 1; transform: translate(-50%, 4px) scale(1.06); }
+  20%  { transform: translate(-50%, 0) scale(1); }
+  85%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -10px) scale(.95); }
+}
+/* whole screen gives a subtle red pulse on rejection */
+.reject-pop.show ~ .view.active { animation: screenReject .5s ease; }
+@keyframes screenReject {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: inset 0 0 0 6px rgba(255,59,59,.35); }
+}
+
+/* ================= "Please rinse me" prompt on the rinsing bin ================= */
+/* When a dirty item is placed, the real rinsing bin pulses to invite the child
+   to rinse it themselves (the bin does NOT auto-wash for them). */
+.station.rinse.needs-rinse {
+  border-color: #3aa0e0;
+  box-shadow: 0 0 0 4px rgba(58,160,224,.4), 0 0 30px rgba(58,160,224,.6);
+  animation: rinseCallout 1s ease-in-out infinite;
+}
+.station.rinse.needs-rinse::before {
+  content: "👋 rinse me here!";
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+  background: #3aa0e0; color: #fff; font-size: 10px; font-weight: 800;
+  padding: 3px 10px; border-radius: 999px; z-index: 6;
+  box-shadow: 0 4px 8px rgba(0,0,0,.2);
+}
+@keyframes rinseCallout {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
