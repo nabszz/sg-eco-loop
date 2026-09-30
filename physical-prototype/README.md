@@ -45,7 +45,9 @@ motion sensor + weight cell reward correct recycling as EZ-Link cents
   cleaning contaminated items before recycling.
 
 ## Documents in this folder
-- [`build-spec.md`](build-spec.md) — dimensions, materials, structure.
+- [`ai-setup-steps.md`](ai-setup-steps.md) — **box already built? START HERE.** Step-by-step to get the AI Lens recognising cards and driving the bin, with paste-ready MakeCode.
+- [`microbit-ai-build.md`](microbit-ai-build.md) — the fuller micro:bit + ELECFREAKS AI Smart Lens build overview and options.
+- [`build-spec.md`](build-spec.md) — dimensions, materials, structure (full-scale concept).
 - [`bill-of-materials.md`](bill-of-materials.md) — parts list with estimated costs.
 - [`electronics-and-wiring.md`](electronics-and-wiring.md) — sensors, controller, wiring, firmware behaviour.
 - [`assembly-notes.md`](assembly-notes.md) — step-by-step build order and safety notes.
