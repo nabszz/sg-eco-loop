@@ -44,6 +44,7 @@
                   <button class="mode-btn on" data-mode="ezlink">💳 EZ-Link</button>
                   <button class="mode-btn" data-mode="points">⭐ Points</button>
                 </div>
+                <button class="settings-btn" id="btnOpenSettings" aria-label="Teacher settings" title="Teacher / Admin settings">⚙️</button>
               </div>
             </div>
 
@@ -216,6 +217,119 @@
             <h2 class="done-h" id="doneMsg">Collected!</h2>
             <p class="done-sub" id="doneSub"></p>
             <button class="btn btn-again" id="btnAgain">🔁 Recycle another item</button>
+          </section>
+
+        <!-- PIN ENTRY (gate before settings) -->
+          <section class="view view-pin" id="view-pin">
+            <div class="pin-wrap">
+              <div class="pin-icon">🔐</div>
+              <h2 class="pin-title">Teacher / Admin Access</h2>
+              <p class="pin-sub">Enter the 4-digit PIN to continue.<br><span class="pin-default">Default PIN: 0000</span></p>
+              <div class="pin-dots" id="pinDots">
+                <span class="pin-dot" id="pd0"></span>
+                <span class="pin-dot" id="pd1"></span>
+                <span class="pin-dot" id="pd2"></span>
+                <span class="pin-dot" id="pd3"></span>
+              </div>
+              <p class="pin-error hidden" id="pinError">❌ Incorrect PIN. Try again.</p>
+              <div class="pin-keypad">
+                <button class="pin-key" data-k="1">1</button>
+                <button class="pin-key" data-k="2">2</button>
+                <button class="pin-key" data-k="3">3</button>
+                <button class="pin-key" data-k="4">4</button>
+                <button class="pin-key" data-k="5">5</button>
+                <button class="pin-key" data-k="6">6</button>
+                <button class="pin-key" data-k="7">7</button>
+                <button class="pin-key" data-k="8">8</button>
+                <button class="pin-key" data-k="9">9</button>
+                <button class="pin-key pin-clear" id="pinClear">⌫</button>
+                <button class="pin-key" data-k="0">0</button>
+                <button class="pin-key pin-cancel" id="pinCancel">✕</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- TEACHER SETTINGS PANEL -->
+          <section class="view view-settings" id="view-settings">
+            <div class="settings-topbar">
+              <h2 class="settings-title">⚙️ Teacher Settings</h2>
+              <button class="btn btn-back settings-close" id="btnCloseSettings">✕ Close</button>
+            </div>
+            <div class="settings-body">
+              <div class="settings-card">
+                <h3 class="settings-card-title">📚 Recycling Mode</h3>
+                <div class="mode-options">
+                  <label class="mode-opt"><input type="radio" name="recycleMode" value="learning" id="modeLearning"><span><strong>Learning Mode</strong><small>Rewards correct sorting and cleaning</small></span></label>
+                  <label class="mode-opt"><input type="radio" name="recycleMode" value="recycling" id="modeRecycling"><span><strong>Recycling Mode</strong><small>Rewards the amount recycled</small></span></label>
+                  <label class="mode-opt"><input type="radio" name="recycleMode" value="challenge" id="modeChallenge"><span><strong>Challenge Mode</strong><small>Competitions between students / classes</small></span></label>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">♻️ Points per 100 g (per material)</h3>
+                <div class="material-rows">
+                  <div class="mat-row" style="--c:#4aa3ff"><span class="mat-emoji">🧴</span><span class="mat-name">Plastic</span><input class="mat-input" type="number" id="ptPlastic" min="0" max="999" value="10"><span class="mat-unit">pts</span></div>
+                  <div class="mat-row" style="--c:#f6b23b"><span class="mat-emoji">📄</span><span class="mat-name">Paper</span><input class="mat-input" type="number" id="ptPaper" min="0" max="999" value="5"><span class="mat-unit">pts</span></div>
+                  <div class="mat-row" style="--c:#57c785"><span class="mat-emoji">🫙</span><span class="mat-name">Glass</span><input class="mat-input" type="number" id="ptGlass" min="0" max="999" value="8"><span class="mat-unit">pts</span></div>
+                  <div class="mat-row" style="--c:#c0c6d0"><span class="mat-emoji">🥫</span><span class="mat-name">Metal</span><input class="mat-input" type="number" id="ptMetal" min="0" max="999" value="8"><span class="mat-unit">pts</span></div>
+                  <div class="mat-row" style="--c:#a97bff"><span class="mat-emoji">🔌</span><span class="mat-name">E-waste</span><input class="mat-input" type="number" id="ptEwaste" min="0" max="999" value="15"><span class="mat-unit">pts</span></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">✖️ Point Multipliers (per material)</h3>
+                <div class="material-rows">
+                  <div class="mat-row" style="--c:#4aa3ff"><span class="mat-emoji">🧴</span><span class="mat-name">Plastic</span><input class="mat-input" type="number" id="mxPlastic" min="1" max="10" step="0.5" value="1"><span class="mat-unit">×</span></div>
+                  <div class="mat-row" style="--c:#f6b23b"><span class="mat-emoji">📄</span><span class="mat-name">Paper</span><input class="mat-input" type="number" id="mxPaper" min="1" max="10" step="0.5" value="1"><span class="mat-unit">×</span></div>
+                  <div class="mat-row" style="--c:#57c785"><span class="mat-emoji">🫙</span><span class="mat-name">Glass</span><input class="mat-input" type="number" id="mxGlass" min="1" max="10" step="0.5" value="1"><span class="mat-unit">×</span></div>
+                  <div class="mat-row" style="--c:#c0c6d0"><span class="mat-emoji">🥫</span><span class="mat-name">Metal</span><input class="mat-input" type="number" id="mxMetal" min="1" max="10" step="0.5" value="1"><span class="mat-unit">×</span></div>
+                  <div class="mat-row" style="--c:#a97bff"><span class="mat-emoji">🔌</span><span class="mat-name">E-waste</span><input class="mat-input" type="number" id="mxEwaste" min="1" max="10" step="0.5" value="2"><span class="mat-unit">×</span></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">🌟 Bonus Points for Good Habits</h3>
+                <div class="bonus-rows">
+                  <div class="bonus-row"><span class="bonus-label">✅ Correctly sorted item</span><input class="mat-input" type="number" id="bonusSort" min="0" max="99" value="5"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">🧼 Recycled a clean item</span><input class="mat-input" type="number" id="bonusClean" min="0" max="99" value="5"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">🚰 Washed a dirty item correctly</span><input class="mat-input" type="number" id="bonusWash" min="0" max="99" value="10"><span class="mat-unit">pts</span></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">📊 Limits &amp; Goals</h3>
+                <div class="bonus-rows">
+                  <div class="bonus-row"><span class="bonus-label">🛑 Max points per student per day</span><input class="mat-input" type="number" id="dailyMax" min="0" max="9999" value="200"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">🏫 Class goal (total EcoPoints)</span><input class="mat-input" type="number" id="classGoal" min="0" max="99999" value="5000"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">📅 Goal deadline</span><input class="mat-input mat-input-date" type="date" id="goalDate"></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">🏆 Reward Milestones</h3>
+                <div class="bonus-rows">
+                  <div class="bonus-row"><span class="bonus-label">🌱 Eco Rookie</span><input class="mat-input" type="number" id="ms1Pts" min="0" max="9999" value="100"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">⭐ Eco Hero</span><input class="mat-input" type="number" id="ms2Pts" min="0" max="9999" value="250"><span class="mat-unit">pts</span></div>
+                  <div class="bonus-row"><span class="bonus-label">🏆 Eco Champion</span><input class="mat-input" type="number" id="ms3Pts" min="0" max="9999" value="500"><span class="mat-unit">pts</span></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">🎉 Special Bonus Period</h3>
+                <div class="bonus-rows">
+                  <div class="bonus-row"><span class="bonus-label">✏️ Period name</span><input class="mat-input mat-input-text" type="text" id="bonusPeriodName" placeholder="e.g. Recycling Week" maxlength="30"></div>
+                  <div class="bonus-row"><span class="bonus-label">✖️ Multiplier during period</span><input class="mat-input" type="number" id="bonusPeriodMx" min="1" max="10" step="0.5" value="2"><span class="mat-unit">×</span></div>
+                  <div class="bonus-row"><span class="bonus-label">📅 Start date</span><input class="mat-input mat-input-date" type="date" id="bonusPeriodStart"></div>
+                  <div class="bonus-row"><span class="bonus-label">📅 End date</span><input class="mat-input mat-input-date" type="date" id="bonusPeriodEnd"></div>
+                </div>
+              </div>
+              <div class="settings-card">
+                <h3 class="settings-card-title">🔑 Change PIN</h3>
+                <div class="bonus-rows">
+                  <div class="bonus-row"><span class="bonus-label">New 4-digit PIN</span><input class="mat-input" type="password" id="newPin" maxlength="4" placeholder="••••" inputmode="numeric" pattern="[0-9]{4}"></div>
+                  <div class="bonus-row"><span class="bonus-label">Confirm new PIN</span><input class="mat-input" type="password" id="confirmPin" maxlength="4" placeholder="••••" inputmode="numeric" pattern="[0-9]{4}"></div>
+                  <p class="pin-change-msg hidden" id="pinChangeMsg"></p>
+                </div>
+              </div>
+            </div>
+            <div class="settings-footer">
+              <button class="btn btn-save-settings" id="btnSaveSettings">💾 Save Settings</button>
+              <p class="save-msg hidden" id="saveMsg">✅ Settings saved!</p>
+            </div>
           </section>
 
         </div>

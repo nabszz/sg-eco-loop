@@ -270,9 +270,10 @@ let lastReward = { value: 0, grams: 0, collected: false };
 let idleTimer = null;
 let autoFlow = false;               // true when a placed item should auto-detect + auto-reward
 let pendingRinse = false;           // true when a dirty placed item is waiting for the child to rinse
+let lastDispenseWasDirty = false;   // true when the item was washed before dispensing (bonus points)
 
 /* ---------- Views ---------- */
-const VIEW_KEYS = ["idle", "mascot", "game", "washing", "reward", "collect", "done"];
+const VIEW_KEYS = ["idle", "mascot", "game", "washing", "reward", "collect", "done", "pin", "settings"];
 function showView(key) {
   VIEW_KEYS.forEach(k => {
     const el = $("view-" + k);
@@ -312,6 +313,7 @@ function goIdle() {
   current = null;
   autoFlow = false;
   pendingRinse = false;
+  lastDispenseWasDirty = false;
   clearRinsePrompt();
   lastReward = { value: 0, grams: 0, collected: false };
   clearLights();
@@ -418,6 +420,7 @@ function openMascot(material, preset, praise) {
 
 /* ---------- Clean path ---------- */
 function chooseClean() {
+  lastDispenseWasDirty = false;
   $("itemCheck").classList.add("hidden");
   $("washBox").classList.add("hidden");
   $("dispenseBox").classList.remove("hidden");
@@ -476,6 +479,7 @@ function clearRinsePrompt() {
 
 /* ---------- Washing animation ---------- */
 function goWash() {
+  lastDispenseWasDirty = true;
   clearRinsePrompt();
   showView("washing");
   $("washingChar").innerHTML = mascotCharacter(current, 90);
@@ -539,7 +543,14 @@ function dispense() {
   const [lo, hi] = WEIGHT_RANGES[current];
   const grams = randInt(lo, hi);
   const r = REWARD[rewardMode];
-  const value = Math.max(1, Math.round(grams * r.perGram));
+
+  // calculate reward using teacher settings when in points mode
+  let value;
+  if (rewardMode === "points") {
+    value = calcTeacherPoints(current, grams, lastDispenseWasDirty);
+  } else {
+    value = Math.max(1, Math.round(grams * r.perGram));
+  }
 
   lastReward = { value, grams, collected: false };
 
@@ -1013,6 +1024,7 @@ function init() {
   wireDropZone();
 
   setRewardMode(rewardMode);
+  initSettings();
   goIdle();
 }
 
@@ -1023,3 +1035,283 @@ function goWashFromStation() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+
+/* ============================================================
+   TEACHER / ADMIN SETTINGS MODULE
+   PIN-protected. Default PIN: 0000.
+   All settings persist in localStorage under "ecoloop_settings".
+   Points calculation feeds back into dispense() via calcTeacherPoints().
+   ============================================================ */
+
+// ---------- Default settings ------------------------------------------------
+const DEFAULT_SETTINGS = {
+  pin: "0000",
+  mode: "learning",                        // learning | recycling | challenge
+  // points per 100 g per material
+  pts: { plastic: 10, paper: 5, glass: 8, metal: 8, ewaste: 15 },
+  // per-material multipliers
+  mx:  { plastic: 1,  paper: 1, glass: 1, metal: 1, ewaste: 2  },
+  // bonus points
+  bonusSort: 5,    // correctly sorted
+  bonusClean: 5,   // item was clean
+  bonusWash: 10,   // washed a dirty item
+  // limits & goals
+  dailyMax: 200,
+  classGoal: 5000,
+  goalDate: "",
+  // milestones
+  ms1: 100, ms2: 250, ms3: 500,
+  // bonus period
+  bonusPeriodName: "",
+  bonusPeriodMx: 2,
+  bonusPeriodStart: "",
+  bonusPeriodEnd: ""
+};
+
+// Material key order (matches the HTML rows)
+const MAT_KEYS = ["plastic", "paper", "glass", "metal", "ewaste"];
+
+// ---------- Load / save -------------------------------------------------------
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem("ecoloop_settings");
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), JSON.parse(raw));
+  } catch (e) {
+    return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  }
+}
+
+function saveSettings(s) {
+  localStorage.setItem("ecoloop_settings", JSON.stringify(s));
+}
+
+// Always read fresh settings from localStorage
+function getSettings() { return loadSettings(); }
+
+// ---------- Points calculation -----------------------------------------------
+function calcTeacherPoints(materialKey, grams, wasWashed) {
+  const s = getSettings();
+
+  // base points (per 100 g)
+  const base = (s.pts[materialKey] || 0) * (grams / 100);
+
+  // per-material multiplier
+  const matMx = s.mx[materialKey] || 1;
+
+  // bonus points
+  let bonus = s.bonusSort;                           // always: correct sort
+  if (!wasWashed) bonus += s.bonusClean;             // clean item bonus
+  if (wasWashed)  bonus += s.bonusWash;              // washed correctly bonus
+
+  // bonus period multiplier
+  let periodMx = 1;
+  if (s.bonusPeriodStart && s.bonusPeriodEnd) {
+    const today = new Date().toISOString().slice(0, 10);
+    if (today >= s.bonusPeriodStart && today <= s.bonusPeriodEnd) {
+      periodMx = s.bonusPeriodMx || 1;
+    }
+  }
+
+  // mode adjustments
+  let modeMx = 1;
+  if (s.mode === "recycling") { modeMx = 1.2; }     // reward volume more
+  if (s.mode === "challenge") { modeMx = 1.5; }     // competition boost
+
+  const total = Math.round((base * matMx + bonus) * periodMx * modeMx);
+
+  // daily max (best-effort: community bin can't truly enforce per-student cap,
+  // but we cap the single-session reward shown on screen)
+  return Math.min(total, s.dailyMax || 9999);
+}
+
+// Check if a points total has hit a milestone; return the milestone label or null
+function checkMilestone(points) {
+  const s = getSettings();
+  if (points >= s.ms3) return "🏆 Eco Champion!";
+  if (points >= s.ms2) return "⭐ Eco Hero!";
+  if (points >= s.ms1) return "🌱 Eco Rookie!";
+  return null;
+}
+
+// ---------- PIN logic ---------------------------------------------------------
+let pinBuffer = "";
+
+function openPinView() {
+  pinBuffer = "";
+  updatePinDots();
+  const err = $("pinError");
+  if (err) err.classList.add("hidden");
+  showView("pin");
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = $("pd" + i);
+    if (dot) dot.classList.toggle("filled", i < pinBuffer.length);
+  }
+}
+
+function pinKeyPress(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(checkPin, 180);  // small delay so last dot fills visually
+  }
+}
+
+function pinBackspace() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+  const err = $("pinError");
+  if (err) err.classList.add("hidden");
+}
+
+function checkPin() {
+  const s = getSettings();
+  if (pinBuffer === (s.pin || "0000")) {
+    populateSettingsForm(s);
+    showView("settings");
+  } else {
+    const err = $("pinError");
+    if (err) err.classList.remove("hidden");
+    pinBuffer = "";
+    updatePinDots();
+    if (soundOn) speak("Incorrect PIN. Please try again.");
+  }
+}
+
+// ---------- Populate form from saved settings ---------------------------------
+function populateSettingsForm(s) {
+  // mode radio
+  const modeEl = document.querySelector(`input[name="recycleMode"][value="${s.mode}"]`);
+  if (modeEl) modeEl.checked = true;
+
+  // per-material points + multipliers
+  MAT_KEYS.forEach(k => {
+    const cap = k.charAt(0).toUpperCase() + k.slice(1);
+    const ptEl = $("pt" + cap);
+    const mxEl = $("mx" + cap);
+    if (ptEl) ptEl.value = s.pts[k] ?? DEFAULT_SETTINGS.pts[k];
+    if (mxEl) mxEl.value = s.mx[k]  ?? DEFAULT_SETTINGS.mx[k];
+  });
+
+  // bonus points
+  if ($("bonusSort"))  $("bonusSort").value  = s.bonusSort  ?? 5;
+  if ($("bonusClean")) $("bonusClean").value = s.bonusClean ?? 5;
+  if ($("bonusWash"))  $("bonusWash").value  = s.bonusWash  ?? 10;
+
+  // limits & goals
+  if ($("dailyMax"))  $("dailyMax").value  = s.dailyMax  ?? 200;
+  if ($("classGoal")) $("classGoal").value = s.classGoal ?? 5000;
+  if ($("goalDate"))  $("goalDate").value  = s.goalDate  ?? "";
+
+  // milestones
+  if ($("ms1Pts")) $("ms1Pts").value = s.ms1 ?? 100;
+  if ($("ms2Pts")) $("ms2Pts").value = s.ms2 ?? 250;
+  if ($("ms3Pts")) $("ms3Pts").value = s.ms3 ?? 500;
+
+  // bonus period
+  if ($("bonusPeriodName"))  $("bonusPeriodName").value  = s.bonusPeriodName  ?? "";
+  if ($("bonusPeriodMx"))    $("bonusPeriodMx").value    = s.bonusPeriodMx    ?? 2;
+  if ($("bonusPeriodStart")) $("bonusPeriodStart").value = s.bonusPeriodStart ?? "";
+  if ($("bonusPeriodEnd"))   $("bonusPeriodEnd").value   = s.bonusPeriodEnd   ?? "";
+
+  // clear PIN change fields
+  if ($("newPin"))       $("newPin").value       = "";
+  if ($("confirmPin"))   $("confirmPin").value   = "";
+  if ($("pinChangeMsg")) $("pinChangeMsg").classList.add("hidden");
+  if ($("saveMsg"))      $("saveMsg").classList.add("hidden");
+}
+
+// ---------- Read form into a settings object -----------------------------------
+function readSettingsForm() {
+  const s = loadSettings();   // start from current saved state
+
+  // mode
+  const modeEl = document.querySelector('input[name="recycleMode"]:checked');
+  if (modeEl) s.mode = modeEl.value;
+
+  // per-material points + multipliers
+  MAT_KEYS.forEach(k => {
+    const cap = k.charAt(0).toUpperCase() + k.slice(1);
+    const ptEl = $("pt" + cap);
+    const mxEl = $("mx" + cap);
+    if (ptEl) s.pts[k] = Math.max(0, parseInt(ptEl.value) || 0);
+    if (mxEl) s.mx[k]  = Math.max(1, parseFloat(mxEl.value) || 1);
+  });
+
+  // bonus points
+  if ($("bonusSort"))  s.bonusSort  = Math.max(0, parseInt($("bonusSort").value)  || 0);
+  if ($("bonusClean")) s.bonusClean = Math.max(0, parseInt($("bonusClean").value) || 0);
+  if ($("bonusWash"))  s.bonusWash  = Math.max(0, parseInt($("bonusWash").value)  || 0);
+
+  // limits & goals
+  if ($("dailyMax"))  s.dailyMax  = Math.max(0, parseInt($("dailyMax").value)  || 0);
+  if ($("classGoal")) s.classGoal = Math.max(0, parseInt($("classGoal").value) || 0);
+  if ($("goalDate"))  s.goalDate  = $("goalDate").value  || "";
+
+  // milestones
+  if ($("ms1Pts")) s.ms1 = Math.max(0, parseInt($("ms1Pts").value) || 0);
+  if ($("ms2Pts")) s.ms2 = Math.max(0, parseInt($("ms2Pts").value) || 0);
+  if ($("ms3Pts")) s.ms3 = Math.max(0, parseInt($("ms3Pts").value) || 0);
+
+  // bonus period
+  if ($("bonusPeriodName"))  s.bonusPeriodName  = $("bonusPeriodName").value  || "";
+  if ($("bonusPeriodMx"))    s.bonusPeriodMx    = Math.max(1, parseFloat($("bonusPeriodMx").value) || 1);
+  if ($("bonusPeriodStart")) s.bonusPeriodStart = $("bonusPeriodStart").value || "";
+  if ($("bonusPeriodEnd"))   s.bonusPeriodEnd   = $("bonusPeriodEnd").value   || "";
+
+  // PIN change (only update if both fields filled and match)
+  const np  = ($("newPin")?.value     || "").trim();
+  const cp  = ($("confirmPin")?.value || "").trim();
+  const msg = $("pinChangeMsg");
+  if (np || cp) {
+    if (np.length !== 4 || !/^\d{4}$/.test(np)) {
+      if (msg) { msg.textContent = "❌ PIN must be exactly 4 digits."; msg.classList.remove("hidden"); }
+      return null;   // abort save
+    }
+    if (np !== cp) {
+      if (msg) { msg.textContent = "❌ PINs do not match."; msg.classList.remove("hidden"); }
+      return null;
+    }
+    s.pin = np;
+    if (msg) { msg.textContent = "✅ PIN updated!"; msg.classList.remove("hidden"); }
+  }
+
+  return s;
+}
+
+// ---------- Save handler -------------------------------------------------------
+function saveSettingsHandler() {
+  const s = readSettingsForm();
+  if (!s) return;   // validation failed
+  saveSettings(s);
+  const msg = $("saveMsg");
+  if (msg) { msg.classList.remove("hidden"); setTimeout(() => msg.classList.add("hidden"), 2000); }
+  if (soundOn) speak("Settings saved.");
+}
+
+// ---------- Wire settings events -----------------------------------------------
+function initSettings() {
+  // gear button opens PIN view
+  const gearBtn = $("btnOpenSettings");
+  if (gearBtn) gearBtn.addEventListener("click", () => { openPinView(); });
+
+  // PIN keypad
+  document.querySelectorAll(".pin-key[data-k]").forEach(btn => {
+    btn.addEventListener("click", () => pinKeyPress(btn.dataset.k));
+  });
+  const pinClear  = $("pinClear");
+  const pinCancel = $("pinCancel");
+  if (pinClear)  pinClear.addEventListener("click",  pinBackspace);
+  if (pinCancel) pinCancel.addEventListener("click", () => goIdle());
+
+  // settings save + close
+  const saveBtn  = $("btnSaveSettings");
+  const closeBtn = $("btnCloseSettings");
+  if (saveBtn)  saveBtn.addEventListener("click",  saveSettingsHandler);
+  if (closeBtn) closeBtn.addEventListener("click", () => goIdle());
+}
