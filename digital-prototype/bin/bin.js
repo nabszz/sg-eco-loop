@@ -271,6 +271,7 @@ let idleTimer = null;
 let autoFlow = false;               // true when a placed item should auto-detect + auto-reward
 let pendingRinse = false;           // true when a dirty placed item is waiting for the child to rinse
 let lastDispenseWasDirty = false;   // true when the item was washed before dispensing (bonus points)
+let sessionGrams = 0;               // running total of grams recycled this session
 
 /* ---------- Views ---------- */
 const VIEW_KEYS = ["idle", "mascot", "game", "washing", "reward", "collect", "done", "pin", "settings"];
@@ -306,6 +307,22 @@ function setRewardMode(mode) {
   });
   const r = REWARD[mode];
   $("modeNote").textContent = `Reward today: ${r.label}. Collected by each child at the end — nothing is stored on this community bin.`;
+}
+
+/* ---------- Waste counter (top-left, session total) ---------- */
+function updateWasteCounter() {
+  const el = $("wasteTotal");
+  if (!el) return;
+  // show grams under 1000 as "Xg", at 1000+ convert to kg with 1 decimal
+  if (sessionGrams < 1000) {
+    el.textContent = sessionGrams + " g";
+  } else {
+    el.textContent = (sessionGrams / 1000).toFixed(1) + " kg";
+  }
+  // little pop animation to draw attention
+  el.classList.remove("pop-anim");
+  void el.offsetWidth;
+  el.classList.add("pop-anim");
 }
 
 /* ---------- Idle ---------- */
@@ -553,6 +570,10 @@ function dispense() {
   }
 
   lastReward = { value, grams, collected: false };
+
+  // update the session waste counter (top-left of screen)
+  sessionGrams += grams;
+  updateWasteCounter();
 
   animateNumber($("itemWeight"), 0, grams, 700);
   $("rewardValueLabel").textContent = r.label;

@@ -1000,3 +1000,35 @@ body {
   font-size: 14px; font-weight: 800; color: #14a37f;
   animation: pop .3s ease;
 }
+
+/* ================= Topline layout update (left + right) ================= */
+.scr-topline {
+  justify-content: space-between;
+  align-items: center;
+}
+.topline-left {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+
+/* ================= Waste counter (top-left) ================= */
+.waste-counter {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.22);
+  border-radius: 999px; padding: 4px 10px 4px 8px;
+  backdrop-filter: blur(2px);
+}
+.waste-icon { font-size: 14px; }
+.waste-total {
+  font-size: 15px; font-weight: 900; color: #fff;
+  min-width: 36px; text-align: right;
+}
+.waste-label {
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,.85);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+@keyframes wastePopAnim {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); color: #ffe14d; }
+  100% { transform: scale(1); }
+}
+.waste-total.pop-anim { animation: wastePopAnim .45s ease; }

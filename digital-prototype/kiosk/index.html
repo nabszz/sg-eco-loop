@@ -37,7 +37,14 @@
           <!-- IDLE / WELCOME -->
           <section class="view view-idle active" id="view-idle">
             <div class="scr-topline">
-              <span class="scr-logo">♻️ EcoLoop <span class="logo-kids">Kids</span></span>
+              <div class="topline-left">
+                <span class="scr-logo">♻️ EcoLoop <span class="logo-kids">Kids</span></span>
+                <div class="waste-counter" id="wasteCounter" title="Total waste recycled this session">
+                  <span class="waste-icon">⚖️</span>
+                  <span class="waste-total" id="wasteTotal">0 g</span>
+                  <span class="waste-label">recycled</span>
+                </div>
+              </div>
               <div class="topline-right">
                 <button class="sound-btn" id="soundBtn" aria-label="Sound on">🔊</button>
                 <div class="mode-toggle" title="Choose the reward for today">
